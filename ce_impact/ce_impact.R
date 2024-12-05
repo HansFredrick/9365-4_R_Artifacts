@@ -14,7 +14,7 @@ library(ggplot2)
 
 #change this to you directory
 
-setwd('C:\\Users\\CODE CLASSES\\R\\CLONE for FINALS\\9365-4_R_Artifacts')  
+setwd('C:\\Users\\CODE CLASSES\\R\\CLONE for FINALS\\9365-4_R_Artifacts\\ce_impact')  
 
 # ===============================DATASETS======================================
 # load and clean datasets
