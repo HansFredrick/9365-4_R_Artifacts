@@ -38,6 +38,16 @@ fetch_stock_data <- function(symbol, start_date, end_date) {
 }
 stock_data <- fetch_stock_data("AAPL", "2020-01-01", "2023-12-31")
 
+#' Process Stock Data
+#'
+#' Aggregates stock data to calculate average closing prices by year and quarter.
+#'
+#' @param stock_data A data frame of stock data with a `Date` index.
+#' @param close_column A string representing the name of the closing price column (e.g., "AAPL.Close").
+#' @return A data frame with columns `Year`, `Quarter`, and `AvgClose`.
+#'
+#' @examples
+#' process_stock_data(stock_data, "AAPL.Close")
 
 process_stock_data <- function(stock_data, close_column) {
   
