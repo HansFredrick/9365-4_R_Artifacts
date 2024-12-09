@@ -10,3 +10,10 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 library(reshape2)
+
+fetch_stock_data <- function() {
+  getSymbols("AAPL", src = "yahoo", from = "2020-01-01", to = "2023-12-31", auto.assign = TRUE)
+  stock_data <- AAPL
+  return(stock_data)
+}
+stock_data <- fetch_stock_data()
