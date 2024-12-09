@@ -50,6 +50,16 @@ processed_stock_data <- process_stock_data(stock_data, "AAPL.Close")
 
 #function for simulating search popularity
 simulate_search_popularity <- function(years, quarters) {
+   if (is.null(years) || length(years) == 0) {
+    stop("Error: 'years' must not be NULL or empty.")
+  }
+  if (is.null(quarters) || length(quarters) == 0) {
+    stop("Error: 'quarters' must not be NULL or empty.")
+  }
+  if (!is.numeric(min_pop) || !is.numeric(max_pop) || min_pop < 0 || max_pop < min_pop) {
+    stop("Error: 'min_pop' and 'max_pop' must be numeric, and 'max_pop' must be greater than or equal to 'min_pop'.")
+  }
+  
   search_data <- expand.grid(Year = years, Quarter = quarters)
   search_data <- search_data %>%
     mutate(Popularity = round(runif(n(), 50, 100)))
