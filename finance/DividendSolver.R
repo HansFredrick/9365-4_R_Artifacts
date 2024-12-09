@@ -252,16 +252,36 @@ process_large_contributions <- function(contributions, chunk_size = 1000) {
 #data recovery
 
 format_results <- function(results) {
-final_balance <- results$principal + 
-  results$total_contributions + 
-  results$initial_interest + 
-  results$contribution_interest
-
-list(
-  final_balance = round(final_balance, 2),
-  total_interest = round(results$initial_interest + 
-                           results$contribution_interest, 2),
-  total_contributions = round(results$total_contributions, 2),
-  calculation_date = Sys.Date()
-)
+  final_balance <- results$principal + 
+    results$total_contributions + 
+    results$initial_interest + 
+    results$contribution_interest
+  
+  list(
+    final_balance = round(final_balance, 2),
+    total_interest = round(results$initial_interest + 
+                             results$contribution_interest, 2),
+    total_contributions = round(results$total_contributions, 2),
+    calculation_date = Sys.Date()
+  )
 }
+
+# Error Reporter
+error_reporter <- function() {
+  errors <- list()
+  
+  list(
+    add = function(type, message) {
+      errors[[length(errors) + 1]] <- list(
+        type = type,
+        message = message,
+        timestamp = Sys.time()
+      )
+    },
+    get = function() errors,
+    clear = function() errors <<- list()
+  )
+}
+
+
+
