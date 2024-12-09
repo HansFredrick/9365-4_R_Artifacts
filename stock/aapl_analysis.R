@@ -18,14 +18,20 @@ stock_data <- fetch_stock_data("AAPL", "2020-01-01", "2023-12-31")
 
 process_stock_data <- function(stock_data) {
   stock_df <- data.frame(Date = index(stock_data), coredata(stock_data))
+  stock_df <- stock_df %>%
+    mutate(
+      Quarter = paste0("Q", ceiling(as.numeric(format(Date, "%m")) / 3)),
+      Year = format(Date, "%Y")
+    )
+  
   processed <- stock_df %>%
-    mutate(Quarter = paste0("Q", ceiling(as.numeric(format(Date, "%m")) / 3)),
-           Year = format(Date, "%Y")) %>%
-      group_by(Year, Quarter) %>%
-    summarise(AvgClose = mean(AAPL.Close, na.rm = TRUE))
+    group_by(Year, Quarter) %>%
+    summarise(AvgClose = mean(AAPL.Close, na.rm = TRUE), .groups = "drop")
   
   return(processed)
 }
+processed_stock_data <- process_stock_data(stock_data)
+
 
 
 processed_stock_data <- process_stock_data(stock_data)
