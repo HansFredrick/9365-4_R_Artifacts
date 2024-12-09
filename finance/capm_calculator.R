@@ -21,6 +21,11 @@ calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta,
     calc_return <- map_dbl(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
   }
   
+  cat("Results Summary:\n")
+  cat("Average Expected Return:", mean(calc_return) * 100, "%\n")
+  cat("Minimum Expected Return:", min(calc_return) * 100, "%\n")
+  cat("Maximum Expected Return:", max(calc_return) * 100, "%\n")
+  
   df <- tibble(beta = rep(beta, length(market_return)), return = calc_return * 100)
   
   ggplot(df, aes(x = beta, y = return)) + 
