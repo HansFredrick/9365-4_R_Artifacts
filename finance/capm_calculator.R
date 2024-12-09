@@ -28,16 +28,16 @@ calculate_capm <- function(risk_free_rate, market_return, beta) {
 #' @param beta Numeric or vector of numeric values representing the stock's beta. 
 #' @throws Error if any input is invalid. 
 
-validate_inputs <- function(risk_free_rate, market_return, beta) { 
-if (!is.numeric(risk_free_rate) || risk_free_rate < 0) { 
-stop("Error: Risk-free rate must be a non-negative numeric value.") 
-} 
-if (!is.numeric(market_return) || market_return < 0) { 
-stop("Error: Market return must be a non-negative numeric value.") 
-} 
-if (!is.numeric(beta) || length(beta) < 1 || any(beta <= 0)) { 
-stop("Error: Beta must be a positive numeric value or a vector of positive values.") 
-} 
+validate_inputs <- function(risk_free_rate, market_return, beta) {
+  if (!is.numeric(risk_free_rate) || risk_free_rate < 0) {
+    stop("Error: Risk-free rate must be a non-negative numeric value.")
+  }
+  if (!is.numeric(market_return) || market_return < 0) {
+    stop("Error: Market return must be a non-negative numeric value.")
+  }
+  if (!is.numeric(beta) || any(beta <= 0)) {
+    stop("Error: Beta must be a positive numeric value or a vector of positive values.")
+  }
 }
 
 library(testthat)
