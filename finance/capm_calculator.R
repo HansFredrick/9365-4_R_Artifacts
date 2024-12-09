@@ -39,6 +39,9 @@ calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta)
 #' @throws Error if any input is invalid. 
 
 validate_inputs <- function(risk_free_rate, market_return, beta) {
+  if (length(beta) == 0) {
+    stop("Error: Beta cannot be an empty vector.")
+  }
   if (!is.numeric(risk_free_rate) || risk_free_rate < 0) {
     stop("Error: Risk-free rate must be a non-negative numeric value.")
   }
@@ -49,7 +52,6 @@ validate_inputs <- function(risk_free_rate, market_return, beta) {
     stop("Error: Beta must be a positive numeric value or a vector of positive values.")
   }
 }
-
 
 test_that("CAPM function handles vector beta values", {
   result <- calculate_capm(0.02, 0.08, c(1.1, 1.2, 1.3))
