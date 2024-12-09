@@ -34,6 +34,7 @@ compute_quarterly_averages <- function(stock_data) {
 
 processed_stock_data <- compute_quarterly_averages(stock_data)
 
+#function for simulating search popularity
 simulate_search_popularity <- function() {
   search_data <- expand.grid(
     Year = c("2020", "2021", "2022", "2023"),
