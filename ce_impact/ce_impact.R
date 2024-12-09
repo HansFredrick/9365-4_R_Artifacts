@@ -25,42 +25,36 @@ library(ggplot2)    # Advanced visualization
 setwd('C:\\Users\\CODE CLASSES\\R\\CLONE for FINALS\\9365-4_R_Artifacts\\ce_impact')  
 
 # ===============================DATASETS======================================
-# load and clean datasets
-# carbon emissions dataset
+# Load and clean the carbon emissions dataset
 carbon_data <- read_csv("subnational_carbon_data.csv") %>%
-  rename(threshold = 'umd_tree_cover_density_2000__threshold',
-         ce2010 = 'gfw_forest_carbon_gross_emissions_2010__Mg_CO2e',
-         ce2011 = 'gfw_forest_carbon_gross_emissions_2011__Mg_CO2e',
-         ce2012 = 'gfw_forest_carbon_gross_emissions_2012__Mg_CO2e',
-         ce2013 = 'gfw_forest_carbon_gross_emissions_2013__Mg_CO2e',
-         ce2014 = 'gfw_forest_carbon_gross_emissions_2014__Mg_CO2e',
-         ce2015 = 'gfw_forest_carbon_gross_emissions_2015__Mg_CO2e',
-         ce2016 = 'gfw_forest_carbon_gross_emissions_2016__Mg_CO2e',
-         ce2017 = 'gfw_forest_carbon_gross_emissions_2017__Mg_CO2e',
-         ce2018 = 'gfw_forest_carbon_gross_emissions_2018__Mg_CO2e',
-         ce2019 = 'gfw_forest_carbon_gross_emissions_2019__Mg_CO2e',
-         ce2020 = 'gfw_forest_carbon_gross_emissions_2020__Mg_CO2e',
-         subnational = 'subnational1') %>%
+  rename(
+    threshold = 'umd_tree_cover_density_2000__threshold',
+    ce2010 = 'gfw_forest_carbon_gross_emissions_2010__Mg_CO2e',
+    ce2020 = 'gfw_forest_carbon_gross_emissions_2020__Mg_CO2e',
+    subnational = 'subnational1'
+  ) %>%
   select(country, threshold, subnational, ce2010:ce2020) %>%
-  filter(country == "Philippines", threshold >= 30, subnational == "Benguet")
+  filter(
+    country == "Philippines", 
+    threshold >= 30, 
+    subnational == "Benguet"
+  )
 
-# tree cover loss dataset
+# Load and clean the tree cover loss dataset
 tree_cover_data <- read_csv("subnational_tree_cover_loss.csv") %>%
-  rename(tc2010 = 'tc_loss_ha_2010',
-         tc2011 = 'tc_loss_ha_2011',
-         tc2012 = 'tc_loss_ha_2012',
-         tc2013 = 'tc_loss_ha_2013',
-         tc2014 = 'tc_loss_ha_2014',
-         tc2015 = 'tc_loss_ha_2015',
-         tc2016 = 'tc_loss_ha_2016',
-         tc2017 = 'tc_loss_ha_2017',
-         tc2018 = 'tc_loss_ha_2018',
-         tc2019 = 'tc_loss_ha_2019',
-         tc2020 = 'tc_loss_ha_2020',
-         subnational = 'subnational1',
-         extent = 'extent_2010_ha') %>%
+  rename(
+    tc2010 = 'tc_loss_ha_2010',
+    tc2020 = 'tc_loss_ha_2020',
+    extent = 'extent_2010_ha',
+    subnational = 'subnational1'
+  ) %>%
   select(country, threshold, subnational, extent, tc2010:tc2020) %>%
-  filter(country == "Philippines", threshold >= 30, subnational == "Benguet")
+  filter(
+    country == "Philippines", 
+    threshold >= 30, 
+    subnational == "Benguet"
+  )
+
 
 # combine datasets into one dataset to use for analysis, visualization, etc.
 tc_and_ce_data <- carbon_data %>%
