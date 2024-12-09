@@ -10,16 +10,6 @@ calculate_dividend <- function(principal, rate, frequency, start_date, end_date,
   balance <- principal
   interest_earned <- 0
 
-
-    breakdown <- data.frame(
-    type = character(),
-    date = as.Date(character()),
-    amount = numeric(),
-    interest = numeric(),
-    dividend = numeric(),
-    stringsAsFactors = FALSE
-  )
- 
   all_contributions <- additional_contributions %>%
     mutate(contribution_date = as.Date(date)) %>%
     arrange(contribution_date) %>%
