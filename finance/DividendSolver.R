@@ -1,17 +1,21 @@
 library(tidyverse)
 library(lubridate)
 
+#' Comprehensive validation function for all inputs
+validate_inputs <- function(principal, rate, frequency, start_date, end_date, additional_contributions) {
+  validate_numeric_inputs(principal, rate)
+  validate_frequency(frequency)
+  validate_dates(start_date, end_date)
+  validate_contributions(additional_contributions)
+}
 
-
-
-#Input Validation
+# Core validation functions
 validate_numeric_inputs <- function(principal, rate) {
   if (!is.numeric(principal) || principal <= 0)
     stop("Principal must be a positive number")
   if (!is.numeric(rate) || rate < 0 || rate > 1)
     stop("Rate must be between 0 and 1")
 }
-
 
 validate_dates <- function(start_date, end_date) {
   tryCatch({
@@ -51,31 +55,16 @@ validate_frequency <- function(frequency) {
          paste(valid_frequencies, collapse = ", "))
 }
 
-check_parameters <- function(params) {
-  mapply(function(param, type, name) {
-    if (!inherits(param, type))
-      stop(sprintf("%s must be of type %s", name, type))
-  }, params, types, names(params))
-}
-
-
-
-
-
-#Calculation Function
-safe_calculate_dividend <- function(principal, rate, frequency, start_date, 
-                                    end_date, additional_contributions) {
+# Interest calculation functions
+calculate_interest <- function(amount, rate, time, periods) {
   tryCatch({
-    validate_inputs(principal, rate, frequency, start_date, 
-                    end_date, additional_contributions)
-    calculate_dividend(principal, rate, frequency, start_date, 
-                       end_date, additional_contributions)
+    if (amount <= 0 || rate < 0 || time <= 0 || periods <= 0)
+      return(0)
+    
+    amount * ((1 + rate/periods)^(periods * time) - 1)
   }, error = function(e) {
-    list(
-      error = TRUE,
-      message = e$message,
-      timestamp = Sys.time()
-    )
+    warning("Interest calculation error: ", e$message)
+    0
   })
 }
 
@@ -88,178 +77,17 @@ get_compounding_periods <- function(frequency) {
          stop("Invalid frequency specified"))
 }
 
-safe_date_conversion <- function(date_str) {
-  tryCatch({
-    date <- as.Date(date_str)
-    if (is.na(date))
-      stop("Invalid date format")
-    date
-  }, error = function(e) {
-    stop("Date conversion error: ", e$message)
-  })
-}
-
-process_calculations <- function(principal, rate, periods, start_date, end_date, contributions) {
-  initial_interest <- calculate_initial_interest(principal, rate, periods, 
-                                                 start_date, end_date)
-  contribution_interest <- calculate_contribution_interest(contributions, rate, 
-                                                           periods, end_date)
-  
-  list(
-    principal = principal,
-    initial_interest = initial_interest,
-    contribution_interest = contribution_interest,
-    total_contributions = sum(contributions$amount)
-  )
-}
-
-
-
-
-
-
-
-safe_calculate_interest <- function(amount, rate, time, periods) {
-  tryCatch({
-    if (amount <= 0 || rate < 0 || time <= 0 || periods <= 0)
-      return(0)
-    
-    amount * ((1 + rate/periods)^(periods * time) - 1)
-  }, error = function(e) {
-    warning("Interest calculation error: ", e$message)
-    0
-  })
-}
-calculate_contribution_interest_vectorized <- function(contributions, rate, 
-                                                       periods, end_date) {
+calculate_contribution_interest <- function(contributions, rate, periods, end_date) {
+  if(nrow(contributions) == 0) return(0)
   contribution_dates <- as.Date(contributions$date)
-  times <- as.numeric(difftime(end_date, contribution_dates, 
-                               units = "days")) / 365.25
-  
-  mapply(safe_calculate_interest,
-         contributions$amount,
-         MoreArgs = list(rate = rate, periods = periods),
-         time = times)
-}
-calculate_initial_interest <- function(principal, rate, periods, start_date, end_date) {
-  time_total <- as.numeric(difftime(end_date, start_date, units = "days")) / 365.25
-  safe_calculate_interest(principal, rate, time_total, periods)
-}
-#cache handlers
-
-recover_invalid_input <- function(input, default, type) {
-  tryCatch({
-    converted <- as(input, type)
-    if (is.na(converted))
-      default
-    else
-      converted
-  }, error = function(e) {
-    warning("Converting to default value: ", e$message)
-    default
-  })
+  times <- as.numeric(difftime(end_date, contribution_dates, units = "days")) / 365.25
+  sum(mapply(calculate_interest,
+             contributions$amount,
+             MoreArgs = list(rate = rate, periods = periods),
+             time = times))
 }
 
-additional_contributions() {
-  tryCatch({
-    validate_inputs(principal, rate, frequency, start_date, 
-                    end_date, additional_contributions)
-    calculate_dividend(principal, rate, frequency, start_date, 
-                       end_date, additional_contributions)
-  }, error = function(e) {
-    list(
-      error = TRUE,
-      message = e$message,
-      timestamp = Sys.time()
-    )
-  })
-}
-
-
-
-date_handler <- function() {
-  cache <- new.env(parent = emptyenv())
-  
-  list(
-    process = function(date_str) {
-      if (exists(date_str, envir = cache))
-        return(get(date_str, envir = cache))
-      
-      result <- safe_date_conversion(date_str)
-      assign(date_str, result, envir = cache)
-      result
-    },
-    clear = function() rm(list = ls(cache), envir = cache)
-  )
-}
-
-calculation_cache <- function() {
-  cache <- new.env(parent = emptyenv())
-  
-  list(
-    calculate = function(key, expr) {
-      if (exists(key, envir = cache))
-        return(get(key, envir = cache))
-      
-      result <- expr()
-      assign(key, result, envir = cache)
-      result
-    },
-    clear = function() rm(list = ls(cache), envir = cache)
-  )
-}
-
-
-process_large_contributions <- function(contributions, chunk_size = 1000) {
-  split_contributions <- split(contributions, 
-                               ceiling(seq_len(nrow(contributions))/chunk_size))
-  
-  results <- lapply(split_contributions, function(chunk) {
-    result <- calculate_contribution_interest_vectorized(chunk, rate, 
-                                                         periods, end_date)
-    gc() # Cleanup after each chunk
-    result
-  })
-  
-  do.call(rbind, results)
-}
-
-
-#data recovery
-
-format_results <- function(results) {
-  final_balance <- results$principal + 
-    results$total_contributions + 
-    results$initial_interest + 
-    results$contribution_interest
-  
-  list(
-    final_balance = round(final_balance, 2),
-    total_interest = round(results$initial_interest + 
-                             results$contribution_interest, 2),
-    total_contributions = round(results$total_contributions, 2),
-    calculation_date = Sys.Date()
-  )
-}
-
-# Error Reporter
-error_reporter <- function() {
-  errors <- list()
-  
-  list(
-    add = function(type, message) {
-      errors[[length(errors) + 1]] <- list(
-        type = type,
-        message = message,
-        timestamp = Sys.time()
-      )
-    },
-    get = function() errors,
-    clear = function() errors <<- list()
-  )
-}
-
-#' Calculate dividend returns with additional contributions
+#' Main calculation function
 #' @param principal Initial investment amount
 #' @param rate Annual interest rate (decimal)
 #' @param frequency Compounding frequency
@@ -267,131 +95,133 @@ error_reporter <- function() {
 #' @param end_date End date of investment
 #' @param additional_contributions Data frame of contributions
 #' @return List containing calculation results
-calculate_dividend_optimized <- function(principal, rate, frequency, start_date, 
-                                         end_date,ons) {
-  # Initialize handlers
-  calc_cache <- calculation_cache()
-  date_proc <- date_handler()
-  error_rep <- error_reporter()
-  recovery <- input_recovery_handler()
-  
-  # Recover and validate inputs with fallbacks
+calculate_dividend <- function(principal, rate, frequency, start_date, end_date, additional_contributions) {
   tryCatch({
-    # Recover numeric inputs
-    safe_principal <- recovery$recover_numeric(principal, default = 0)
-    safe_rate <- recovery$recover_numeric(rate, default = 0.01)
-    
-    # Recover dates
-    safe_start_date <- recovery$recover_date(start_date)
-    safe_end_date <- recovery$recover_date(end_date)
-    
-    # Recover frequency
-    safe_frequency <- recovery$recover_frequency(frequency)
-    
-    # Recover contributions
-    safe_contributions <- recovery$recover_contributions(additional_contributions)
-    
-    # Validate recovered inputs
-    validate_numeric_inputs(safe_principal, safe_rate)
-    validate_frequency(safe_frequency)
-    validate_dates(safe_start_date, safe_end_date)
-    validate_contributions(safe_contributions)
-    
-    # Process dates
-    dates <- calc_cache$calculate("dates", function() {
-      validate_dates(date_proc$process(safe_start_date), 
-                     date_proc$process(safe_end_date))
-    })
+    # Validate all inputs
+    validate_inputs(principal, rate, frequency, start_date, end_date, additional_contributions)
     
     # Get compounding periods
-    periods <- get_compounding_periods(safe_frequency)
+    periods <- get_compounding_periods(frequency)
     
     # Calculate initial interest
-    time_total <- as.numeric(difftime(dates$end, dates$start, 
-                                      units = "days")) / 365.25
-    initial_interest <- safe_calculate_interest(safe_principal, safe_rate, 
-                                                time_total, periods)
+    time_total <- as.numeric(difftime(end_date, start_date, units = "days")) / 365.25
+    initial_interest <- calculate_interest(principal, rate, time_total, periods)
     
-    # Process contributions
-    contribution_results <- calculate_contribution_interest_vectorized(
-      safe_contributions, safe_rate, periods, dates$end
+    # Calculate contribution interest
+    contribution_interest <- calculate_contribution_interest(
+      additional_contributions, rate, periods, end_date)
+    
+    # Calculate final results
+    total_contributions <- sum(additional_contributions$amount)
+    final_balance <- principal + total_contributions + initial_interest + contribution_interest
+    
+    list(
+      final_balance = round(final_balance, 2),
+      total_interest = round(initial_interest + contribution_interest, 2),
+      total_contributions = round(total_contributions, 2),
+      calculation_date = Sys.Date()
     )
-    
-    # Format results
-    format_results(list(
-      principal = safe_principal,
-      initial_interest = initial_interest,
-      contribution_interest = sum(contribution_results),
-      total_contributions = sum(safe_contributions$amount)
-    ))
-    
   }, error = function(e) {
-    error_rep$add("calculation_error", e$message)
     list(error = TRUE, message = e$message)
   })
 }
 
-# Example Usage
-example <- function() {
-  result <- calculate_dividend_optimized(
-    principal = 5000,
-    rate = 0.06,
-    frequency = "annually",
-    start_date = "2023-01-01",
-    end_date = "2023-12-31",
-    additional_contributions = data.frame(
-      date = c("2023-03-03", "2023-06-15"),
-      amount = c(10000, 2000)
-    )
-  )
-  
-  if (!is.null(result$error)) {
-    cat("Error:", result$message, "\n")
-  } else {
-    cat("Final Balance: $", result$final_balance, "\n")
-    cat("Total Interest: $", result$total_interest, "\n")
-    cat("Total Contributions: $", result$total_contributions, "\n")
-  }
-}
-
-
-#Interactive Calculation
+# Interactive interface
 get_interactive_inputs <- function() {
   cat("\n=== Dividend Calculator ===\n")
   
-  # Get principal
-  principal <- as.numeric(readline("Enter initial investment amount: "))
+  repeat {
+    principal <- tryCatch({
+      value <- as.numeric(readline("Enter initial investment amount: "))
+      if(is.na(value) || value <= 0) stop("Invalid amount")
+      value
+    }, error = function(e) {
+      cat("Please enter a valid positive number\n")
+      NULL
+    })
+    if(!is.null(principal)) break
+  }
   
-  # Get interest rate
-  rate <- as.numeric(readline("Enter annual interest rate (e.g., 0.06 for 6%): "))
+  repeat {
+    rate <- tryCatch({
+      value <- as.numeric(readline("Enter annual interest rate (e.g., 0.06 for 6%): "))
+      if(is.na(value) || value < 0 || value > 1) stop("Invalid rate")
+      value
+    }, error = function(e) {
+      cat("Please enter a valid rate between 0 and 1\n")
+      NULL
+    })
+    if(!is.null(rate)) break
+  }
   
-  # Get frequency
   cat("\nCompounding frequencies available:")
   cat("\n1. annually\n2. semi-annually\n3. quarterly\n4. monthly")
-  frequency_choice <- readline("\nEnter number (1-4): ")
-  frequency <- switch(frequency_choice,
-                      "1" = "annually",
-                      "2" = "semi-annually",
-                      "3" = "quarterly",
-                      "4" = "monthly",
-                      "annually")
+  repeat {
+    frequency_choice <- readline("\nEnter number (1-4): ")
+    frequency <- switch(frequency_choice,
+                        "1" = "annually",
+                        "2" = "semi-annually",
+                        "3" = "quarterly",
+                        "4" = "monthly",
+                        NULL)
+    if(!is.null(frequency)) break
+    cat("Please enter a valid number (1-4)\n")
+  }
   
-  # Get dates
-  start_date <- as.Date(readline("Enter start date (YYYY-MM-DD): "))
-  end_date <- as.Date(readline("Enter end date (YYYY-MM-DD): "))
+  repeat {
+    start_date <- tryCatch({
+      as.Date(readline("Enter start date (YYYY-MM-DD): "))
+    }, error = function(e) {
+      cat("Please enter a valid date in YYYY-MM-DD format\n")
+      NULL
+    })
+    if(!is.null(start_date) && !is.na(start_date)) break
+  }
   
-  # Get contributions
+  repeat {
+    end_date <- tryCatch({
+      date <- as.Date(readline("Enter end date (YYYY-MM-DD): "))
+      if(is.na(date) || date <= start_date) stop("Invalid end date")
+      date
+    }, error = function(e) {
+      cat("Please enter a valid date after start date\n")
+      NULL
+    })
+    if(!is.null(end_date)) break
+  }
+  
   contributions <- data.frame(date = character(), amount = numeric())
   while(TRUE) {
     add_contribution <- readline("\nAdd a contribution? (y/n): ")
     if(tolower(add_contribution) != "y") break
     
-    cont_date <- readline("Enter contribution date (YYYY-MM-DD): ")
-    cont_amount <- as.numeric(readline("Enter contribution amount: "))
+    repeat {
+      cont_date <- tryCatch({
+        date <- as.Date(readline("Enter contribution date (YYYY-MM-DD): "))
+        if(is.na(date) || date < start_date || date > end_date) 
+          stop("Date must be between start and end dates")
+        date
+      }, error = function(e) {
+        cat("Please enter a valid date between start and end dates\n")
+        NULL
+      })
+      if(!is.null(cont_date)) break
+    }
+    
+    repeat {
+      cont_amount <- tryCatch({
+        amount <- as.numeric(readline("Enter contribution amount: "))
+        if(is.na(amount) || amount <= 0) stop("Invalid amount")
+        amount
+      }, error = function(e) {
+        cat("Please enter a valid positive number\n")
+        NULL
+      })
+      if(!is.null(cont_amount)) break
+    }
     
     contributions <- rbind(contributions,
-                           data.frame(date = cont_date, 
-                                      amount = cont_amount))
+                           data.frame(date = cont_date, amount = cont_amount))
   }
   
   list(
@@ -404,10 +234,11 @@ get_interactive_inputs <- function() {
   )
 }
 
+#' Interactive calculator function
 calculate_dividend_interactive <- function() {
   inputs <- get_interactive_inputs()
   
-  result <- calculate_dividend_optimized(
+  result <- calculate_dividend(
     principal = inputs$principal,
     rate = inputs$rate,
     frequency = inputs$frequency,
@@ -425,4 +256,3 @@ calculate_dividend_interactive <- function() {
     cat("Total Contributions: $", format(result$total_contributions, big.mark = ","), "\n")
   }
 }
-
