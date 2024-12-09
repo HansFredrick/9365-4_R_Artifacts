@@ -199,6 +199,21 @@ calculate_contribution_interest_vectorized <- function(contributions, rate,
 }
 
 
+date_handler <- function() {
+  cache <- new.env(parent = emptyenv())
+  
+  list(
+    process = function(date_str) {
+      if (exists(date_str, envir = cache))
+        return(get(date_str, envir = cache))
+      
+      result <- safe_date_conversion(date_str)
+      assign(date_str, result, envir = cache)
+      result
+    },
+    clear = function() rm(list = ls(cache), envir = cache)
+  )
+}
 
 
 #data recovery
