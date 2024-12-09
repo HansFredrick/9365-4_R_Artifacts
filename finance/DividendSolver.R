@@ -354,3 +354,52 @@ example <- function() {
   }
 }
 
+
+#Interactive Calculation
+get_interactive_inputs <- function() {
+  cat("\n=== Dividend Calculator ===\n")
+  
+  # Get principal
+  principal <- as.numeric(readline("Enter initial investment amount: "))
+  
+  # Get interest rate
+  rate <- as.numeric(readline("Enter annual interest rate (e.g., 0.06 for 6%): "))
+  
+  # Get frequency
+  cat("\nCompounding frequencies available:")
+  cat("\n1. annually\n2. semi-annually\n3. quarterly\n4. monthly")
+  frequency_choice <- readline("\nEnter number (1-4): ")
+  frequency <- switch(frequency_choice,
+                      "1" = "annually",
+                      "2" = "semi-annually",
+                      "3" = "quarterly",
+                      "4" = "monthly",
+                      "annually")
+  
+  # Get dates
+  start_date <- as.Date(readline("Enter start date (YYYY-MM-DD): "))
+  end_date <- as.Date(readline("Enter end date (YYYY-MM-DD): "))
+  
+  # Get contributions
+  contributions <- data.frame(date = character(), amount = numeric())
+  while(TRUE) {
+    add_contribution <- readline("\nAdd a contribution? (y/n): ")
+    if(tolower(add_contribution) != "y") break
+    
+    cont_date <- readline("Enter contribution date (YYYY-MM-DD): ")
+    cont_amount <- as.numeric(readline("Enter contribution amount: "))
+    
+    contributions <- rbind(contributions,
+                           data.frame(date = cont_date, 
+                                      amount = cont_amount))
+  }
+  
+  list(
+    principal = principal,
+    rate = rate,
+    frequency = frequency,
+    start_date = start_date,
+    end_date = end_date,
+    additional_contributions = contributions
+  )
+}
