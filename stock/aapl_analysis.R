@@ -61,7 +61,18 @@ process_stock_data <- function(stock_data, close_column) {
 
 processed_stock_data <- process_stock_data(stock_data, "AAPL.Close")
 
-
+#' Simulate Search Popularity
+#'
+#' Generates simulated search popularity data for specified years and quarters.
+#'
+#' @param years A vector of strings representing years (e.g., c("2020", "2021")).
+#' @param quarters A vector of strings representing quarters (e.g., c("Q1", "Q2")).
+#' @param min_pop A numeric value representing the minimum popularity score (default: 50).
+#' @param max_pop A numeric value representing the maximum popularity score (default: 100).
+#' @return A data frame with columns `Year`, `Quarter`, and `Popularity`.
+#'
+#' @examples
+#' simulate_search_popularity(c("2020", "2021"), c("Q1", "Q2"))
 
 simulate_search_popularity <- function(years, quarters) {
    if (is.null(years) || length(years) == 0) {
