@@ -69,6 +69,30 @@ validate_dates <- function(start_date, end_date) {
   })
 }
 
+validate_contributions <- function(contributions) {
+  if (!is.data.frame(contributions))
+    stop("Contributions must be a data frame")
+  
+  required_cols <- c("date", "amount")
+  if (!all(required_cols %in% names(contributions)))
+    stop("Contributions must have 'date' and 'amount' columns")
+  
+  if (!all(sapply(contributions$amount, is.numeric)))
+    stop("Contribution amounts must be numeric")
+  
+  if (any(contributions$amount <= 0))
+    stop("Contribution amounts must be positive")
+}
+
+validate_frequency <- function(frequency) {
+  valid_frequencies <- c("annually", "semi-annually", "quarterly", "monthly")
+  if (!tolower(frequency) %in% valid_frequencies)
+    stop("Invalid frequency. Must be one of: ", 
+         paste(valid_frequencies, collapse = ", "))
+}
+
+
+
 
 #Calculation Funtion
 
