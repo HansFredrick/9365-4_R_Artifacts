@@ -91,6 +91,14 @@ validate_frequency <- function(frequency) {
          paste(valid_frequencies, collapse = ", "))
 }
 
+check_parameters <- function(params) {
+  mapply(function(param, type, name) {
+    if (!inherits(param, type))
+      stop(sprintf("%s must be of type %s", name, type))
+  }, params, types, names(params))
+}
+
+
 
 
 
