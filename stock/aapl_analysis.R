@@ -31,3 +31,5 @@ compute_quarterly_averages <- function(stock_data) {
     )
   return(stock_df)
 }
+
+processed_stock_data <- compute_quarterly_averages(stock_data)
