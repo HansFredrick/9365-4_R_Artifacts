@@ -23,11 +23,15 @@ print(paste("Processing CAPM calculation with risk-free rate =", risk_free_rate,
 
 # CAPM formula 
 # Check if beta is a vector 
+
 if (length(beta) > 1) { 
 calc_return <- sapply(beta, function(b) risk_free_rate + b * (market_return - risk_free_rate)) 
 } else { 
 calc_return <- risk_free_rate + beta * (market_return - risk_free_rate) 
 }
+
+# Convert to percentage 
+calc_return <- calc_return * 100
 
 return(calc_return)
  }
