@@ -1,6 +1,15 @@
 library(tidyverse)
 library(lubridate)
 
+
+#' Calculate dividend returns with additional contributions
+#' @param principal Initial investment amount
+#' @param rate Annual interest rate (decimal)
+#' @param frequency Compounding frequency
+#' @param start_date Start date of investment
+#' @param end_date End date of investment
+#' @param additional_contributions Data frame of contributions
+#' @return List containing calculation results
 calculate_dividend <- function(principal, rate, frequency, start_date, end_date, additional_contributions) {
   # Standard compliant function definition
   compounding_periods <- get_compounding_periods(frequency)
