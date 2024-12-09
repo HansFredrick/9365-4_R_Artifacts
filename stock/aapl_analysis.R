@@ -48,7 +48,7 @@ process_stock_data <- function(stock_data, close_column) {
 processed_stock_data <- process_stock_data(stock_data, "AAPL.Close")
 
 
-#function for simulating search popularity
+
 simulate_search_popularity <- function(years, quarters) {
    if (is.null(years) || length(years) == 0) {
     stop("Error: 'years' must not be NULL or empty.")
@@ -121,7 +121,7 @@ create_overengineered_graphs <- function(data) {
 }
 
 
- # Extracted comparison graph.
+
   ccreate_comparison_graph <- function(data, scale_factor = 10) {
   ggplot(data, aes(x = Quarter)) +
     geom_bar(aes(y = AvgStockGrowth, fill = "Stock Growth"), stat = "identity") +
@@ -138,8 +138,6 @@ calculate_quarters <- function(date_column) {
 
 comparison_plot <- create_comparison_graph(merged_data
 
-### Execution ###
-# Step 1: Fetch stock data
 stock_data <- fetch_apple_stock_data()
 
 testthat::test_that("fetch_stock_data returns non-empty data", {
@@ -147,14 +145,14 @@ testthat::test_that("fetch_stock_data returns non-empty data", {
   testthat::expect_true(nrow(data) > 0)
 })
 
-# Step 2: Simulate search popularity
+
 search_data <- simulate_search_data()
 
 
-# Step 3: Merge and compare datasets
+
 merged_data <- merge_and_compare(stock_data, search_data)
 
 
-# Step 4: Create graphs
+
 create_overengineered_graphs(merged_data)
 
