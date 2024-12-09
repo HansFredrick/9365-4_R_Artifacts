@@ -119,6 +119,16 @@ safe_calculate_dividend <- function(principal, rate, frequency, start_date,
   })
 }
 
+safe_date_conversion <- function(date_str) {
+  tryCatch({
+    date <- as.Date(date_str)
+    if (is.na(date))
+      stop("Invalid date format")
+    date
+  }, error = function(e) {
+    stop("Date conversion error: ", e$message)
+  })
+}
 
 
 additional_contributions() {
