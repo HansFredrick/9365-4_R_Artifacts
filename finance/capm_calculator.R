@@ -14,15 +14,14 @@ MARKET_RETURN <- 0.08 # 8% expected market return
 #' @param risk_free_rate Numeric value representing the risk-free rate (default 0.02). 
 #' @param market_return Numeric value representing the expected market return. #' @param beta Numeric or vector of numeric values representing the stock's beta. 
 #' @return A numeric value or vector of expected returns. 
-
 calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta, line_color = "blue") {
-  if (missing(risk_free_rate)) risk_free_rate <- RISK_FREE_RATE
+  if (length(market_return) > 1) {
+    calc_return <- mapply(function(r, b) risk_free_rate + (b * (r - risk_free_rate)), market_return, beta)
+  } else {
+    calc_return <- map_dbl(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
+  }
   
-  validate_inputs(risk_free_rate, market_return, beta)
-  
-  calc_return <- map_dbl(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
-  
-  df <- tibble(beta = beta, return = calc_return * 100)
+  df <- tibble(beta = rep(beta, length(market_return)), return = calc_return * 100)
   
   ggplot(df, aes(x = beta, y = return)) + 
     geom_line(color = line_color) + 
