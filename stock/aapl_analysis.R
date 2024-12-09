@@ -60,10 +60,14 @@ simulate_search_popularity <- function(years, quarters) {
     stop("Error: 'min_pop' and 'max_pop' must be numeric, and 'max_pop' must be greater than or equal to 'min_pop'.")
   }
   
+  simulate_search_popularity <- function(years, quarters, min_pop = 50, max_pop = 100) {
   search_data <- expand.grid(Year = years, Quarter = quarters)
   search_data <- search_data %>%
-    mutate(Popularity = round(runif(n(), 50, 100)))
+    mutate(Popularity = round(runif(n(), min_pop, max_pop)))
   return(search_data)
+}
+
+
 }
 search_data <- simulate_search_popularity(c("2020", "2021", "2022", "2023"), c("Q1", "Q2", "Q3", "Q4"))
 
