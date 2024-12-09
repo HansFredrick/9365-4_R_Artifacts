@@ -403,3 +403,26 @@ get_interactive_inputs <- function() {
     additional_contributions = contributions
   )
 }
+
+calculate_dividend_interactive <- function() {
+  inputs <- get_interactive_inputs()
+  
+  result <- calculate_dividend_optimized(
+    principal = inputs$principal,
+    rate = inputs$rate,
+    frequency = inputs$frequency,
+    start_date = inputs$start_date,
+    end_date = inputs$end_date,
+    additional_contributions = inputs$additional_contributions
+  )
+  
+  if (!is.null(result$error)) {
+    cat("\nError:", result$message, "\n")
+  } else {
+    cat("\n=== Results ===\n")
+    cat("Final Balance: $", format(result$final_balance, big.mark = ","), "\n")
+    cat("Total Interest: $", format(result$total_interest, big.mark = ","), "\n")
+    cat("Total Contributions: $", format(result$total_contributions, big.mark = ","), "\n")
+  }
+}
+
