@@ -53,6 +53,23 @@ validate_numeric_inputs <- function(principal, rate) {
 }
 
 
+validate_dates <- function(start_date, end_date) {
+  tryCatch({
+    start <- as.Date(start_date)
+    end <- as.Date(end_date)
+    
+    if (is.na(start) || is.na(end))
+      stop("Invalid date format")
+    if (end <= start)
+      stop("End date must be after start date")
+    
+    list(start = start, end = end)
+  }, error = function(e) {
+    stop("Date validation error: ", e$message)
+  })
+}
+
+
 #Calculation Funtion
 
 format_results <- function(results) {
