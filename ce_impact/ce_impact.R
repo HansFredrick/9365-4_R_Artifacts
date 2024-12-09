@@ -69,8 +69,9 @@ tc_and_ce_data <- carbon_data %>%
 
 
 # ================================SAVING======================================
-# save a dataset into a csv
-write_csv(tc_and_ce_data, "final_data.csv")
+# Save the combined dataset for reproducibility and external analysis
+write_csv(tc_and_ce_data, "final_data_ce_impact.csv")
+
 
 # =============================VISUALIZATION======================================
 # scatter plot for year 2010
