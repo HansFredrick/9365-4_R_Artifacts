@@ -10,6 +10,14 @@ calculate_dividend <- function(principal, rate, frequency, start_date, end_date,
 }
 
 
+get_compounding_periods <- function(frequency) {
+  switch(tolower(frequency),
+         "annually"      = 1,
+         "semi-annually" = 2,
+         "quarterly"     = 4,
+         "monthly"      = 12,
+         stop("Invalid frequency specified"))
+}
 
 initial_amount <- 5000
 interest_rate <- 0.06  
