@@ -18,7 +18,16 @@ calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta)
   validate_inputs(risk_free_rate, market_return, beta)
   
   calc_return <- map_dbl(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
-
+  
+  # Create a data frame more efficiently
+  df <- tibble(beta = beta, return = calc_return * 100)
+  
+  ggplot(df, aes(x = beta, y = return)) + 
+    geom_line() + 
+    ggtitle("CAPM: Expected Return vs. Beta") + 
+    xlab("Beta") + 
+    ylab("Expected Return (%)")
+  
   return(calc_return * 100)
 }
 
