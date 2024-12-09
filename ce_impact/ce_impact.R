@@ -9,15 +9,16 @@
 
 
 # =================================SETUP=======================================
-# install needed packages
-install.packages("tidyverse")
-install.packages("dplyr") 
-install.packages("ggplot2")
+# Install and load required packages
+if (!requireNamespace("tidyverse")) install.packages("tidyverse")
+if (!requireNamespace("dplyr")) install.packages("dplyr")
+if (!requireNamespace("ggplot2")) install.packages("ggplot2")
 
-# load installed packages
-library(tidyverse)
-library(dplyr)
-library(ggplot2)
+# Load installed libraries
+library(tidyverse)  # Data manipulation and visualization
+library(dplyr)      # Data wrangling
+library(ggplot2)    # Advanced visualization
+
 
 #change this to you directory
 
