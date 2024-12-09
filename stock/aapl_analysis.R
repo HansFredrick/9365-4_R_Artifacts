@@ -18,11 +18,8 @@ stock_data <- fetch_stock_data("AAPL", "2020-01-01", "2023-12-31")
 
 process_stock_data <- function(stock_data, close_column) {
   stock_df <- data.frame(Date = index(stock_data), coredata(stock_data))
-  stock_df <- stock_df %>%
-    mutate(
-      Quarter = paste0("Q", ceiling(as.numeric(format(Date, "%m")) / 3)),
-      Year = format(Date, "%Y")
-    )
+  quarter_info <- calculate_quarters(stock_df$Date)
+  stock_df <- cbind(stock_df, quarter_info)
   
   processed <- stock_df %>%
     group_by(Year, Quarter) %>%
@@ -30,6 +27,7 @@ process_stock_data <- function(stock_data, close_column) {
   
   return(processed)
 }
+
 processed_stock_data <- process_stock_data(stock_data, "AAPL.Close")
 
 
