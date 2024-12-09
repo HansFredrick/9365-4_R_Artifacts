@@ -96,7 +96,7 @@ scatter_2010 <- create_scatter_plot(tc_and_ce_data, 2010)
 print(scatter_2010)
 
 
-# pivot the carbon data to long format
+# Pivot carbon emissions data into long format for year-wise analysis
 carbon_long <- carbon_data %>%
   pivot_longer(
     cols = starts_with("ce"),
@@ -105,6 +105,7 @@ carbon_long <- carbon_data %>%
     names_transform = list(year = as.integer),
     values_to = "ce"
   )
+
 
 # calculate the average carbon emissions per year
 carbon_avg_per_year <- carbon_long %>%
