@@ -16,7 +16,7 @@ fetch_stock_data <- function(symbol, start_date, end_date) {
 
 stock_data <- fetch_stock_data("AAPL", "2020-01-01", "2023-12-31")
 
-process_stock_data <- function(stock_data) {
+process_stock_data <- function(stock_data, close_column) {
   stock_df <- data.frame(Date = index(stock_data), coredata(stock_data))
   stock_df <- stock_df %>%
     mutate(
@@ -26,12 +26,11 @@ process_stock_data <- function(stock_data) {
   
   processed <- stock_df %>%
     group_by(Year, Quarter) %>%
-    summarise(AvgClose = mean(AAPL.Close, na.rm = TRUE), .groups = "drop")
+    summarise(AvgClose = mean(stock_df[[close_column]], na.rm = TRUE), .groups = "drop")
   
   return(processed)
 }
-processed_stock_data <- process_stock_data(stock_data)
-
+processed_stock_data <- process_stock_data(stock_data, "AAPL.Close")
 
 
 processed_stock_data <- process_stock_data(stock_data)
