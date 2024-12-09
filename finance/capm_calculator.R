@@ -19,7 +19,7 @@ stop("Error: Beta must be a positive numeric value.")
 calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta) {
 validate_inputs(risk_free_rate, market_return, beta) 
 
-print("Processing CAPM calculation...")
+print(paste("Processing CAPM calculation with risk-free rate =", risk_free_rate, ", market return =", market_return, ", and beta =", beta))
 
 # CAPM formula 
 # Check if beta is a vector 
