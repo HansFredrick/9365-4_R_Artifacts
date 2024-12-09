@@ -74,38 +74,27 @@ write_csv(tc_and_ce_data, "final_data_ce_impact.csv")
 
 
 # =============================VISUALIZATION======================================
-# scatter plot for year 2010
-data_2010 <- tc_and_ce_data %>%
-  select(country, threshold, subnational, extent, ce2010, tc2010)
+# Function to generate scatter plot for a specific year
+create_scatter_plot <- function(data, year) {
+  ggplot(data, aes_string(x = paste0("ce", year), y = paste0("tc", year), color = "factor(threshold)", size = "extent")) +
+    geom_point(alpha = 0.7) + 
+    scale_color_manual(
+      values = c("30" = "#CC0000", "50" = "#FF6666", "75" = "red"),
+      name = "Threshold"
+    ) +
+    scale_size_continuous(name = "Extent") +
+    labs(
+      title = paste("Carbon Emissions vs Tree Cover Loss (", year, ")", sep = ""),
+      x = paste("Carbon Emissions (Mg CO2e) in ", year, sep = ""),
+      y = paste("Tree Cover Loss (ha) in ", year, sep = "")
+    ) +
+    theme_minimal()
+}
 
-# create the scatter plot for 2010 with thresholds indicated by color and extent as point size
-ggplot(data_2010, aes(x = ce2010, y = tc2010, color = factor(threshold), size = extent)) +
-  geom_point(alpha = 0.7) + 
-  scale_color_manual(
-    values = c("30" = "#CC0000", "50" = "#FF6666", "75" = "red"),
-    name = "Threshold",
-    breaks = c("30", "50", "75"),
-    labels = c("30", "50", "75")
-  ) +
-  scale_size_continuous(
-    range = c(3, 10),
-    name = "Extent"
-  ) +
-  labs(
-    title = "Carbon Emissions vs Tree Cover Loss (2010)",
-    x = "Carbon Emissions (Mg CO2e) in 2010",
-    y = "Tree Cover Loss (ha) in 2010",
-    color = "Threshold",
-    size = "Extent (ha)"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    axis.title = element_text(size = 12),
-    axis.text = element_text(size = 10),
-    legend.title = element_text(size = 12),
-    legend.text = element_text(size = 10)
-  )
+# Generate scatter plot for 2010
+scatter_2010 <- create_scatter_plot(tc_and_ce_data, 2010)
+print(scatter_2010)
+
 
 # pivot the carbon data to long format
 carbon_long <- carbon_data %>%
