@@ -156,6 +156,19 @@ recover_invalid_input <- function(input, default, type) {
   })
 }
 
+recover_invalid_input <- function(input, default, type) {
+  tryCatch({
+    converted <- as(input, type)
+    if (is.na(converted))
+      default
+    else
+      converted
+  }, error = function(e) {
+    warning("Converting to default value: ", e$message)
+    default
+  })
+}
+
 
 
 additional_contributions() {
