@@ -44,9 +44,8 @@ simulate_search_popularity <- function(years, quarters) {
 }
 search_data <- simulate_search_popularity(c("2020", "2021", "2022", "2023"), c("Q1", "Q2", "Q3", "Q4"))
 
-
 merge_stock_and_search <- function(stock_data, search_data) {
-  merged <- merge(stock_data, search_data, by = c("Year", "Quarterr"))
+  merged <- merge(stock_data, search_data, by = c("Year", "Quarter"))
   return(merged)
 }
 merged_data <- merge_stock_and_search(processed_stock_data, search_data)
