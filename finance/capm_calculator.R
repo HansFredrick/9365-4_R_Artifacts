@@ -10,16 +10,19 @@ MARKET_RETURN <- 0.08 # 8% expected market return
 #' @param market_return Numeric value representing the expected market return. #' @param beta Numeric or vector of numeric values representing the stock's beta. 
 #' @return A numeric value or vector of expected returns. 
 
-calculate_capm <- function(risk_free_rate, market_return, beta) {
-  if (missing(risk_free_rate)) risk_free_rate <- RISK_FREE_RATE
-  if (missing(market_return)) market_return <- 0.08
-  if (missing(beta)) beta <- 1.2
-
+calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta) {
   validate_inputs(risk_free_rate, market_return, beta)
   
-  calc_return <- risk_free_rate + (beta * (market_return - risk_free_rate))
+  if (length(beta) > 1) {
+    calc_return <- sapply(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
+  } else {
+    calc_return <- risk_free_rate + (beta * (market_return - risk_free_rate))
+  }
+  
   return(calc_return * 100)
 }
+
+
 
 #' Validate Input Parameters for CAPM Calculation 
 #' 
