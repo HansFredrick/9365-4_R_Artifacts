@@ -216,6 +216,21 @@ date_handler <- function() {
 }
 
 
+process_large_contributions <- function(contributions, chunk_size = 1000) {
+  split_contributions <- split(contributions, 
+                               ceiling(seq_len(nrow(contributions))/chunk_size))
+  
+  results <- lapply(split_contributions, function(chunk) {
+    result <- calculate_contribution_interest_vectorized(chunk, rate, 
+                                                         periods, end_date)
+    gc() # Cleanup after each chunk
+    result
+  })
+  
+  do.call(rbind, results)
+}
+
+
 #data recovery
 
 format_results <- function(results) {
