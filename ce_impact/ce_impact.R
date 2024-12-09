@@ -107,28 +107,20 @@ carbon_long <- carbon_data %>%
   )
 
 
-# calculate the average carbon emissions per year
+# Calculate average carbon emissions per year
 carbon_avg_per_year <- carbon_long %>%
   group_by(year) %>%
   summarise(avg_ce = mean(ce, na.rm = TRUE))
 
-# create the line plot
-ggplot(carbon_avg_per_year, aes(x = year, y = avg_ce, group = 1)) +
+# Generate line plot for average carbon emissions
+ggplot(carbon_avg_per_year, aes(x = year, y = avg_ce)) +
   geom_line(color = "blue", size = 1) +
   geom_point(color = "blue", size = 2) +
-  scale_x_continuous(breaks = 2010:2020,  # set year breaks
-                     labels = as.character(2010:2020)) +
   labs(
-    title = "Average Carbon Emissions from 2010 to 2020",
+    title = "Average Carbon Emissions (2010-2020)",
     x = "Year",
     y = "Average Carbon Emissions (Mg CO2e)"
   ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    axis.title = element_text(size = 12),
-    axis.text = element_text(size = 10),
-    axis.ticks = element_line(size = 0.5),
-    axis.ticks.length = unit(0.2, "cm")
-  )
+  theme_minimal()
+
 
