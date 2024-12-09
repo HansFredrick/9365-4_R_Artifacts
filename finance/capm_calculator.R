@@ -16,22 +16,22 @@ stop("Error: Beta must be a positive numeric value or a vector of positive value
 }
 }
 
-calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta) {
+calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta) { 
+
 validate_inputs(risk_free_rate, market_return, beta) 
 
-print(paste("Processing CAPM calculation with risk-free rate =", risk_free_rate, ", market return =", market_return, ", and beta =", beta))
+print(paste("Processing CAPM calculation with risk-free rate =", risk_free_rate, ", market return =", market_return, ", and beta =", beta)) 
 
-# CAPM formula 
 # Check if beta is a vector 
 
 if (length(beta) > 1) { 
 calc_return <- sapply(beta, function(b) risk_free_rate + b * (market_return - risk_free_rate)) 
 } else { 
 calc_return <- risk_free_rate + beta * (market_return - risk_free_rate) 
-}
+} 
 
 # Convert to percentage 
-calc_return <- calc_return * 100
+calc_return <- calc_return * 100 
 
-return(calc_return)
- }
+return(calc_return) 
+}
