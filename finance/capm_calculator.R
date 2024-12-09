@@ -14,17 +14,22 @@ MARKET_RETURN <- 0.08 # 8% expected market return
 #' @param risk_free_rate Numeric value representing the risk-free rate (default 0.02). 
 #' @param market_return Numeric value representing the expected market return. #' @param beta Numeric or vector of numeric values representing the stock's beta. 
 #' @return A numeric value or vector of expected returns. 
+
+calculate_capm_cache <- list()
+
 calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta, line_color = "blue") {
+  cache_key <- paste(risk_free_rate, market_return, paste(beta, collapse = ","), sep = "_")
+  
+  if (exists(cache_key, envir = calculate_capm_cache)) {
+    cat("Fetching cached result...\n")
+    return(get(cache_key, envir = calculate_capm_cache))
+  }
+  
   if (length(market_return) > 1) {
     calc_return <- mapply(function(r, b) risk_free_rate + (b * (r - risk_free_rate)), market_return, beta)
   } else {
     calc_return <- map_dbl(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
   }
-  
-  cat("Results Summary:\n")
-  cat("Average Expected Return:", mean(calc_return) * 100, "%\n")
-  cat("Minimum Expected Return:", min(calc_return) * 100, "%\n")
-  cat("Maximum Expected Return:", max(calc_return) * 100, "%\n")
   
   df <- tibble(beta = rep(beta, length(market_return)), return = calc_return * 100)
   
@@ -34,8 +39,12 @@ calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta,
     xlab("Beta") + 
     ylab("Expected Return (%)")
   
+  assign(cache_key, calc_return, envir = calculate_capm_cache)
+  
   return(calc_return * 100)
 }
+
+
 
 #' Validate Input Parameters for CAPM Calculation 
 #' 
