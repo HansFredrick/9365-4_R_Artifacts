@@ -92,6 +92,14 @@ merge_stock_and_search <- function(stock_data, search_data) {
 }
 
 
+simulate_search_popularity <- function(years, quarters, min_pop = 50, max_pop = 100) {
+  search_data <- expand.grid(Year = years, Quarter = quarters)
+  search_data <- search_data %>%
+    mutate(Popularity = round(runif(n(), min_pop, max_pop)))
+  return(search_data)
+}
+
+
 
 create_overengineered_graphs <- function(data) {
 
