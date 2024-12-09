@@ -3,6 +3,7 @@
 library(ggplot2)
 library(purrr)
 library(testthat)
+library(future.apply)
 
 # Constants 
 RISK_FREE_RATE <- 0.02 # 2% risk-free rate 
@@ -13,17 +14,22 @@ MARKET_RETURN <- 0.08 # 8% expected market return
 #' @param risk_free_rate Numeric value representing the risk-free rate (default 0.02). 
 #' @param market_return Numeric value representing the expected market return. #' @param beta Numeric or vector of numeric values representing the stock's beta. 
 #' @return A numeric value or vector of expected returns. 
-
-calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta) {
-  validate_inputs(risk_free_rate, market_return, beta)
+calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta, line_color = "blue") {
+  if (length(market_return) > 1) {
+    calc_return <- mapply(function(r, b) risk_free_rate + (b * (r - risk_free_rate)), market_return, beta)
+  } else {
+    calc_return <- map_dbl(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
+  }
   
-  calc_return <- map_dbl(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
+  cat("Results Summary:\n")
+  cat("Average Expected Return:", mean(calc_return) * 100, "%\n")
+  cat("Minimum Expected Return:", min(calc_return) * 100, "%\n")
+  cat("Maximum Expected Return:", max(calc_return) * 100, "%\n")
   
-  # Create a data frame more efficiently
-  df <- tibble(beta = beta, return = calc_return * 100)
+  df <- tibble(beta = rep(beta, length(market_return)), return = calc_return * 100)
   
   ggplot(df, aes(x = beta, y = return)) + 
-    geom_line() + 
+    geom_line(color = line_color) + 
     ggtitle("CAPM: Expected Return vs. Beta") + 
     xlab("Beta") + 
     ylab("Expected Return (%)")
@@ -48,8 +54,8 @@ validate_inputs <- function(risk_free_rate, market_return, beta) {
   if (!is.numeric(market_return) || market_return < 0) {
     stop("Error: Market return must be a non-negative numeric value.")
   }
-  if (!is.numeric(beta) || any(beta <= 0)) {
-    stop("Error: Beta must be a positive numeric value or a vector of positive values.")
+  if (!all(is.numeric(beta)) || any(beta <= 0)) {
+    stop("Error: Beta must be a vector of positive numeric values.")
   }
 }
 
@@ -62,4 +68,9 @@ test_that("CAPM function handles vector beta values", {
 test_that("CAPM visualization works", {
   result <- capture.output(calculate_capm(0.02, 0.08, c(1.1, 1.2, 1.3)))
   expect_true(any(grepl("Expected Return vs. Beta", result)))
+})
+
+test_that("CAPM function handles negative beta values", {
+  expect_error(calculate_capm(0.02, 0.08, -1))
+  expect_error(calculate_capm(0.02, 0.08, c(-1, 1.2)))
 })
