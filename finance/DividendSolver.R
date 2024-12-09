@@ -131,6 +131,19 @@ safe_date_conversion <- function(date_str) {
 }
 
 
+safe_calculate_interest <- function(amount, rate, time, periods) {
+  tryCatch({
+    if (amount <= 0 || rate < 0 || time <= 0 || periods <= 0)
+      return(0)
+    
+    amount * ((1 + rate/periods)^(periods * time) - 1)
+  }, error = function(e) {
+    warning("Interest calculation error: ", e$message)
+    0
+  })
+}
+
+
 additional_contributions() {
   tryCatch({
     validate_inputs(principal, rate, frequency, start_date, 
