@@ -6,6 +6,20 @@ library(quantmod)
 library(ggplot2)
 library(dplyr)
 
+
+#' Fetch Stock Data
+#'
+#' Retrieves stock data from Yahoo Finance for a specified symbol and date range.
+#'
+#' @param symbol A string representing the stock ticker symbol (e.g., "AAPL").
+#' @param start_date A string in "YYYY-MM-DD" format representing the start date.
+#' @param end_date A string in "YYYY-MM-DD" format representing the end date.
+#' @return A data frame of stock data with the associated dates as the index.
+#'
+#' @examples
+#' fetch_stock_data("AAPL", "2020-01-01", "2023-12-31")
+#' @throws Error if parameters are missing or invalid.
+
 fetch_stock_data <- function(symbol, start_date, end_date) {
   if (missing(symbol) || missing(start_date) || missing(end_date)) {
     stop("Error: 'symbol', 'start_date', and 'end_date' are required parameters.")
