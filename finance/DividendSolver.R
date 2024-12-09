@@ -44,26 +44,19 @@ process_calculations <- function(principal, rate, periods, start_date, end_date,
 }
 
 
-initial_amount <- 5000
-interest_rate <- 0.06  
-frequency <- "annually"
-start_date <- as.Date("2023-01-01")
-end_date <- as.Date("2023-12-31")
+#Calculation Funtion
 
+format_results <- function(results) {
+final_balance <- results$principal + 
+  results$total_contributions + 
+  results$initial_interest + 
+  results$contribution_interest
 
-
-
-additional_contributions <- data.frame(
-  date = c("2023-03-03", "2023-06-15"),
-  amount = c(10000, 2000)  
+list(
+  final_balance = round(final_balance, 2),
+  total_interest = round(results$initial_interest + 
+                           results$contribution_interest, 2),
+  total_contributions = round(results$total_contributions, 2),
+  calculation_date = Sys.Date()
 )
-
-
-result <- calculate_dividend(
-  principal = initial_amount,
-  rate = interest_rate,
-  frequency = frequency,
-  start_date = start_date,
-  end_date = end_date,
-  additional_contributions = additional_contributions
-)
+}
