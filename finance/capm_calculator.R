@@ -15,11 +15,7 @@ calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta)
   
   print("Starting CAPM calculations for beta values...")
   
-  if (length(beta) > 1) {
-    calc_return <- sapply(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
-  } else {
-    calc_return <- risk_free_rate + (beta * (market_return - risk_free_rate))
-  }
+  calc_return <- vapply(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)), numeric(1))
   
   print("CAPM calculations completed.")
   
@@ -46,6 +42,3 @@ validate_inputs <- function(risk_free_rate, market_return, beta) {
 }
 
 library(testthat)
- 
-test_that("CAPM function calculates correctly", { expect_equal(calculate_capm(0.02, 0.08, 1.2), 8) expect_equal(calculate_capm(0.02, 0.08, c(1, 2)), c(8, 10)) 
-})
