@@ -106,6 +106,17 @@ simulate_search_popularity <- function(years, quarters) {
 }
 search_data <- simulate_search_popularity(c("2020", "2021", "2022", "2023"), c("Q1", "Q2", "Q3", "Q4"))
 
+#' Merge Stock and Search Data
+#'
+#' Merges processed stock data with simulated search popularity data.
+#'
+#' @param stock_data A data frame containing processed stock data (`Year`, `Quarter`, `AvgClose`).
+#' @param search_data A data frame containing simulated search popularity data (`Year`, `Quarter`, `Popularity`).
+#' @return A merged data frame with columns `Year`, `Quarter`, `AvgClose`, and `Popularity`.
+#'
+#' @examples
+#' merge_stock_and_search(processed_stock_data, search_data)
+
 merge_stock_and_search <- function(stock_data, search_data) {
   required_cols <- c("Year", "Quarter")
   if (!all(required_cols %in% colnames(stock_data))) {
