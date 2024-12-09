@@ -19,31 +19,6 @@ calculate_dividend <- function(principal, rate, frequency, start_date, end_date,
 }
 
 
-get_compounding_periods <- function(frequency) {
-  switch(tolower(frequency),
-         "annually"      = 1,
-         "semi-annually" = 2,
-         "quarterly"     = 4,
-         "monthly"      = 12,
-         stop("Invalid frequency specified"))
-}
-
-
-process_calculations <- function(principal, rate, periods, start_date, end_date, contributions) {
-  initial_interest <- calculate_initial_interest(principal, rate, periods, 
-                                                 start_date, end_date)
-  contribution_interest <- calculate_contribution_interest(contributions, rate, 
-                                                           periods, end_date)
-  
-  list(
-    principal = principal,
-    initial_interest = initial_interest,
-    contribution_interest = contribution_interest,
-    total_contributions = sum(contributions$amount)
-  )
-}
-
-
 #Input Validation
 validate_numeric_inputs <- function(principal, rate) {
   if (!is.numeric(principal) || principal <= 0)
@@ -119,6 +94,15 @@ safe_calculate_dividend <- function(principal, rate, frequency, start_date,
   })
 }
 
+get_compounding_periods <- function(frequency) {
+  switch(tolower(frequency),
+         "annually"      = 1,
+         "semi-annually" = 2,
+         "quarterly"     = 4,
+         "monthly"      = 12,
+         stop("Invalid frequency specified"))
+}
+
 safe_date_conversion <- function(date_str) {
   tryCatch({
     date <- as.Date(date_str)
@@ -129,6 +113,25 @@ safe_date_conversion <- function(date_str) {
     stop("Date conversion error: ", e$message)
   })
 }
+
+process_calculations <- function(principal, rate, periods, start_date, end_date, contributions) {
+  initial_interest <- calculate_initial_interest(principal, rate, periods, 
+                                                 start_date, end_date)
+  contribution_interest <- calculate_contribution_interest(contributions, rate, 
+                                                           periods, end_date)
+  
+  list(
+    principal = principal,
+    initial_interest = initial_interest,
+    contribution_interest = contribution_interest,
+    total_contributions = sum(contributions$amount)
+  )
+}
+
+
+
+
+
 
 
 safe_calculate_interest <- function(amount, rate, time, periods) {
@@ -142,6 +145,18 @@ safe_calculate_interest <- function(amount, rate, time, periods) {
     0
   })
 }
+calculate_contribution_interest_vectorized <- function(contributions, rate, 
+                                                       periods, end_date) {
+  contribution_dates <- as.Date(contributions$date)
+  times <- as.numeric(difftime(end_date, contribution_dates, 
+                               units = "days")) / 365.25
+  
+  mapply(safe_calculate_interest,
+         contributions$amount,
+         MoreArgs = list(rate = rate, periods = periods),
+         time = times)
+}
+#cache handlers
 
 recover_invalid_input <- function(input, default, type) {
   tryCatch({
@@ -168,8 +183,6 @@ recover_invalid_input <- function(input, default, type) {
     default
   })
 }
-
-
 
 additional_contributions() {
   tryCatch({
@@ -186,17 +199,6 @@ additional_contributions() {
   })
 }
 
-calculate_contribution_interest_vectorized <- function(contributions, rate, 
-                                                       periods, end_date) {
-  contribution_dates <- as.Date(contributions$date)
-  times <- as.numeric(difftime(end_date, contribution_dates, 
-                               units = "days")) / 365.25
-  
-  mapply(safe_calculate_interest,
-         contributions$amount,
-         MoreArgs = list(rate = rate, periods = periods),
-         time = times)
-}
 
 
 date_handler <- function() {
@@ -209,6 +211,22 @@ date_handler <- function() {
       
       result <- safe_date_conversion(date_str)
       assign(date_str, result, envir = cache)
+      result
+    },
+    clear = function() rm(list = ls(cache), envir = cache)
+  )
+}
+
+calculation_cache <- function() {
+  cache <- new.env(parent = emptyenv())
+  
+  list(
+    calculate = function(key, expr) {
+      if (exists(key, envir = cache))
+        return(get(key, envir = cache))
+      
+      result <- expr()
+      assign(key, result, envir = cache)
       result
     },
     clear = function() rm(list = ls(cache), envir = cache)
