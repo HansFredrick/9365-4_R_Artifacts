@@ -141,20 +141,11 @@ calculate_contribution_interest_vectorized <- function(contributions, rate,
          MoreArgs = list(rate = rate, periods = periods),
          time = times)
 }
-#cache handlers
-
-recover_invalid_input <- function(input, default, type) {
-  tryCatch({
-    converted <- as(input, type)
-    if (is.na(converted))
-      default
-    else
-      converted
-  }, error = function(e) {
-    warning("Converting to default value: ", e$message)
-    default
-  })
+calculate_initial_interest <- function(principal, rate, periods, start_date, end_date) {
+  time_total <- as.numeric(difftime(end_date, start_date, units = "days")) / 365.25
+  safe_calculate_interest(principal, rate, time_total, periods)
 }
+#cache handlers
 
 recover_invalid_input <- function(input, default, type) {
   tryCatch({
