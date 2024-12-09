@@ -31,9 +31,6 @@ calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta,
   return(calc_return * 100)
 }
 
-
-
-
 #' Validate Input Parameters for CAPM Calculation 
 #' 
 #' @param risk_free_rate Numeric value representing the risk-free rate. 
