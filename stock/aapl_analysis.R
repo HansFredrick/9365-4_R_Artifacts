@@ -68,6 +68,14 @@ simulate_search_popularity <- function(years, quarters) {
 search_data <- simulate_search_popularity(c("2020", "2021", "2022", "2023"), c("Q1", "Q2", "Q3", "Q4"))
 
 merge_stock_and_search <- function(stock_data, search_data) {
+  required_cols <- c("Year", "Quarter")
+  if (!all(required_cols %in% colnames(stock_data))) {
+    stop("Error: 'stock_data' must contain 'Year' and 'Quarter' columns.")
+  }
+  if (!all(required_cols %in% colnames(search_data))) {
+    stop("Error: 'search_data' must contain 'Year' and 'Quarter' columns.")
+  }
+  
   if (!all(c("Year", "Quarter") %in% colnames(stock_data))) {
     stop("Stock data must contain 'Year' and 'Quarter' columns.")
   }
