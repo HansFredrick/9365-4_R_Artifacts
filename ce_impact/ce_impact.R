@@ -121,9 +121,9 @@ ggplot(carbon_avg_per_year, aes(x = year, y = avg_ce, group = 1)) +
   scale_x_continuous(breaks = 2010:2020,  # set year breaks
                      labels = as.character(2010:2020)) +
   labs(
-    title = "Average Carbon Emissions from 2010 to 2020",
+    title = "Average Carbon Footprint from 2010 to 2020",
     x = "Year",
-    y = "Average Carbon Emissions (Mg CO2e)"
+    y = "Average Carbon Footprint (Mg CO2e)"
   ) +
   theme_minimal() +
   theme(

@@ -1,11 +1,11 @@
-calculate_dividend <- function(principal, rate, frequency, start_date, end_date, additional_contributions) {
+alculateDividend<-function(Principal,rate,Freq,startDate,endDate,AdditionalContributions){
   # Define compounding periods per year
-  compounding_periods <- switch(frequency,
-                                "annually" = 1,
-                                "semi-annually" = 2,
-                                "quarterly" = 4,
-                                "monthly" = 12,
-                                stop("Invalid frequency"))
+  compoundingPeriods<-switch(Freq,
+"annually"=1,
+"semi-annually"=2,
+                             "quarterly"=4,
+                             "monthly"=12,
+                             stop("Invalid frequency"))
   
   # Initialize variables
   balance <- principal
@@ -48,10 +48,11 @@ calculate_dividend <- function(principal, rate, frequency, start_date, end_date,
     contribution_amount <- contribution$amount  # Extracting value in amount column
     
     # Calculate time from contribution date to end date
-    time_in_years <- as.numeric(difftime(end_date, contribution_date, units = "days")) / 365.25
+    TimeInYears=as.numeric(difftime(endDate,ContributionDate,units="days"))/365.25
+    
     
     # Calculate interest for this contribution
-    interest_for_contribution <- contribution_amount * ((1 + rate / compounding_periods)^(compounding_periods * time_in_years) - 1)
+    InterestForContribution=ContributionAmount*((1+rate/compoundingPeriods)^(compoundingPeriods*TimeInYears)-1)
     
     # Update balance and interest earned
     balance <- balance + contribution_amount
@@ -74,26 +75,27 @@ calculate_dividend <- function(principal, rate, frequency, start_date, end_date,
 }
 
 # Example usage
-initial_amount <- 5000  # Initial principal deposit
-interest_rate <- 0.06  # 6% annual interest
-frequency <- "annually"
-start_date <- as.Date("2023-01-01")
-end_date <- as.Date("2023-12-31")
+initial_amount = 5000
+Interest_Rate = 0.06 # Inconsistent naming
+frequency="annually"
+Start_Date = as.Date("2023-01-01")
+End_Date = as.Date("2023-12-31")
+
 
 # Contributions
-additional_contributions <- data.frame(
-  date = c("2023-03-03", "2023-06-15"),  # Contribution dates
-  amount = c(10000, 2000)  # Contribution amounts
-)
+Additional_Contributions = data.frame(
+  date=c("2023-03-03","2023-06-15"),
+  amount=c(10000,2000)
+) # No validation of contribution data
 
-result <- calculate_dividend(
-  principal = initial_amount,
-  rate = interest_rate,
-  frequency = frequency,
-  start_date = start_date,
-  end_date = end_date,
-  additional_contributions = additional_contributions
-)
+result=calculateDividend(
+  Principal=initial_amount,
+  rate=Interest_Rate,
+  Freq=frequency,
+  startDate=Start_Date,
+  endDate=End_Date,
+  AdditionalContributions=Additional_Contributions
+) # No error handling for function call
 
 # Print results
 cat("Final Balance:", round(result$final_balance, 2), "\n")
