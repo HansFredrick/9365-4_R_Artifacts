@@ -90,6 +90,10 @@ comparison_plot <- create_comparison_graph(merged_data
 # Step 1: Fetch stock data
 stock_data <- fetch_apple_stock_data()
 
+testthat::test_that("fetch_stock_data returns non-empty data", {
+  data <- fetch_stock_data("AAPL", "2020-01-01", "2023-12-31")
+  testthat::expect_true(nrow(data) > 0)
+})
 
 # Step 2: Simulate search popularity
 search_data <- simulate_search_data()
