@@ -56,12 +56,17 @@ tree_cover_data <- read_csv("subnational_tree_cover_loss.csv") %>%
   )
 
 
-# combine datasets into one dataset to use for analysis, visualization, etc.
+# Combine datasets based on the 'threshold' column
 tc_and_ce_data <- carbon_data %>%
   right_join(tree_cover_data, by = "threshold") %>%
-  rename(country = 'country.x',
-         subnational = 'subnational.x') %>%
+  rename(
+    country = 'country.x',
+    subnational = 'subnational.x'
+  ) %>%
   select(-country.y, -subnational.y)
+
+# This ensures we retain information from both datasets for common thresholds.
+
 
 # ================================SAVING======================================
 # save a dataset into a csv
