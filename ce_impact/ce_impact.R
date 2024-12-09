@@ -1,5 +1,12 @@
-# Team 4: R Programming
-# ARAGONA, BALOGO, BAUTISTA, CAYTON, MORALES, PALACIO
+# Team 4: R Programming Project
+# Authors: ARAGONA, BALOGO, BAUTISTA, CAYTON, MORALES, PALACIO
+
+# Description:
+# This script processes and visualizes carbon emissions and tree cover loss data 
+# for the Philippines (specifically Benguet), using datasets from 2010 to 2020.
+
+# Note: Ensure datasets are located in the specified working directory.
+
 
 # =================================SETUP=======================================
 # install needed packages
@@ -121,9 +128,9 @@ ggplot(carbon_avg_per_year, aes(x = year, y = avg_ce, group = 1)) +
   scale_x_continuous(breaks = 2010:2020,  # set year breaks
                      labels = as.character(2010:2020)) +
   labs(
-    title = "Average Carbon Footprint from 2010 to 2020",
+    title = "Average Carbon Emissions from 2010 to 2020",
     x = "Year",
-    y = "Average Carbon Footprint (Mg CO2e)"
+    y = "Average Carbon Emissions (Mg CO2e)"
   ) +
   theme_minimal() +
   theme(
