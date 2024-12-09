@@ -26,6 +26,14 @@ stock_data <- fetch_stock_data("AAPL", "2020-01-01", "2023-12-31")
 
 
 process_stock_data <- function(stock_data, close_column) {
+  
+  if (is.null(stock_data) || nrow(stock_data) == 0) {
+    stop("Error: 'stock_data' must not be NULL or empty.")
+  }
+  if (!close_column %in% colnames(stock_data)) {
+    stop(paste0("Error: Column '", close_column, "' does not exist in the stock data."))
+  }
+  
   stock_df <- data.frame(Date = index(stock_data), coredata(stock_data))
   quarter_info <- calculate_quarters(stock_df$Date)
   stock_df <- cbind(stock_df, quarter_info)
