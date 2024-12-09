@@ -19,6 +19,22 @@ get_compounding_periods <- function(frequency) {
          stop("Invalid frequency specified"))
 }
 
+
+process_calculations <- function(principal, rate, periods, start_date, end_date, contributions) {
+  initial_interest <- calculate_initial_interest(principal, rate, periods, 
+                                                 start_date, end_date)
+  contribution_interest <- calculate_contribution_interest(contributions, rate, 
+                                                           periods, end_date)
+  
+  list(
+    principal = principal,
+    initial_interest = initial_interest,
+    contribution_interest = contribution_interest,
+    total_contributions = sum(contributions$amount)
+  )
+}
+
+
 initial_amount <- 5000
 interest_rate <- 0.06  
 frequency <- "annually"
