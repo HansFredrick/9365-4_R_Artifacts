@@ -49,3 +49,50 @@ merge_stock_and_search <- function(stock_data, search_data) {
 merged_data <- merge_stock_and_search(processed_stock_data, search_data)
 
 
+
+create_overengineered_graphs <- function(data) {
+  # Plot 1: Stock Price vs Popularity
+  plot1 <- ggplot(data, aes(x = Quarter, group = Year)) +
+    geom_line(aes(y = AvgClose, color = "Stock Price")) +
+    geom_line(aes(y = Popularity * 100, color = "Popularity (Scaled)")) +
+    facet_wrap(~Year, scales = "free_x") +
+    ggtitle("Stock Price vs Popularity by Quarter (Why?)") +
+    theme_minimal()
+  print(plot1)
+ 
+  # Plot 2: Growth Comparison
+  plot2 <- ggplot(data, aes(x = Quarter, group = Year)) +
+    geom_bar(aes(y = StockGrowth), stat = "identity", fill = "blue", alpha = 0.6) +
+    geom_bar(aes(y = PopularityGrowth), stat = "identity", fill = "green", alpha = 0.4) +
+    facet_wrap(~Year) +
+    ggtitle("Stock Growth vs Popularity Growth") +
+    theme_classic()
+  print(plot2)
+ 
+  # Plot 3: Irrelevant Scatterplot
+  plot3 <- ggplot(data, aes(x = StockGrowth, y = PopularityGrowth)) +
+    geom_point(aes(color = Year), size = 3) +
+    geom_smooth(method = "lm", se = FALSE, color = "red") +
+    ggtitle("Scatterplot of Growth Metrics (Why?)") +
+    theme_light()
+  print(plot3)
+}
+
+
+### Execution ###
+# Step 1: Fetch stock data
+stock_data <- fetch_apple_stock_data()
+
+
+# Step 2: Simulate search popularity
+search_data <- simulate_search_data()
+
+
+# Step 3: Merge and compare datasets
+merged_data <- merge_and_compare(stock_data, search_data)
+
+
+# Step 4: Create graphs
+create_overengineered_graphs(merged_data)
+
+
