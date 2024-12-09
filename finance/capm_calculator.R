@@ -15,3 +15,11 @@ if (!is.numeric(beta) || beta <= 0) {
 stop("Invalid beta. It should be a positive numeric value.") 
 } 
 }
+
+calculate_capm <- function(risk_free_rate, market_return, beta) {
+validate_inputs(risk_free_rate, market_return, beta) 
+# CAPM formula 
+expected_return <- risk_free_rate + beta * (market_return - risk_free_rate) 
+
+return(expected_return)
+ }
