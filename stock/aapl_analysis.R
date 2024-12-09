@@ -84,6 +84,13 @@ create_overengineered_graphs <- function(data) {
     ggtitle("Comparison Graph")
 }
 
+calculate_quarters <- function(date_column) {
+  data.frame(
+    Quarter = paste0("Q", ceiling(as.numeric(format(date_column, "%m")) / 3)),
+    Year = format(date_column, "%Y")
+  )
+}
+
 comparison_plot <- create_comparison_graph(merged_data
 
 ### Execution ###
