@@ -61,13 +61,14 @@ create_overengineered_graphs <- function(data) {
   print(plot1)
  
   # Plot 2: Growth Comparison
-  plot2 <- ggplot(data, aes(x = Quarter, group = Year)) +
-    geom_bar(aes(y = StockGrowth), stat = "identity", fill = "blue", alpha = 0.6) +
-    geom_bar(aes(y = PopularityGrowth), stat = "identity", fill = "green", alpha = 0.4) +
-    facet_wrap(~Year) +
-    ggtitle("Stock Growth vs Popularity Growth") +
-    theme_classic()
-  print(plot2)
+  comparison_plot <- ggplot(data, aes(x = Quarter)) +
+   geom_bar(aes(y = AvgStockGrowth, fill = "Stock Growth"), stat = "identity", position = "dodge") +
+   geom_bar(aes(y = AvgPopularityGrowth, fill = "Popularity Growth"), stat = "identity", position = "dodge") +
+   geom_line(aes(y = DifferenceMetric * 10, group = 1, color = "Difference Metric"), size = 1, linetype = "dashed") +
+   scale_y_continuous(sec.axis = sec_axis(~./10, name = "Difference Metric (Scaled)")) +
+   ggtitle("Quarterly Comparison Since 2022")
+
+
  
   # Plot 3: Irrelevant Scatterplot
   plot3 <- ggplot(data, aes(x = StockGrowth, y = PopularityGrowth)) +
