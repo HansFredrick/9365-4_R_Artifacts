@@ -43,3 +43,9 @@ simulate_search_popularity <- function() {
   return(search_data)
 }
 search_data <- simulate_search_popularity()
+
+merge_stock_and_search <- function(stock_data, search_data) {
+  merged <- merge(stock_data, search_data, by = c("Year", "Quarter"))
+  return(merged)
+}
+merged_data <- merge_stock_and_search(processed_stock_data, search_data)
