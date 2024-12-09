@@ -50,8 +50,8 @@ validate_inputs <- function(risk_free_rate, market_return, beta) {
   if (!is.numeric(market_return) || market_return < 0) {
     stop("Error: Market return must be a non-negative numeric value.")
   }
-  if (!is.numeric(beta) || any(beta <= 0)) {
-    stop("Error: Beta must be a positive numeric value or a vector of positive values.")
+  if (!all(is.numeric(beta)) || any(beta <= 0)) {
+    stop("Error: Beta must be a vector of positive numeric values.")
   }
 }
 
