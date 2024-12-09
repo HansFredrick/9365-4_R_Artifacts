@@ -3,6 +3,7 @@
 library(ggplot2)
 library(purrr)
 library(testthat)
+library(future.apply)
 
 # Constants 
 RISK_FREE_RATE <- 0.02 # 2% risk-free rate 
@@ -14,22 +15,17 @@ MARKET_RETURN <- 0.08 # 8% expected market return
 #' @param market_return Numeric value representing the expected market return. #' @param beta Numeric or vector of numeric values representing the stock's beta. 
 #' @return A numeric value or vector of expected returns. 
 
+
 calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta) {
   validate_inputs(risk_free_rate, market_return, beta)
   
-  calc_return <- map_dbl(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
+  plan(multisession)
   
-  # Create a data frame more efficiently
-  df <- tibble(beta = beta, return = calc_return * 100)
-  
-  ggplot(df, aes(x = beta, y = return)) + 
-    geom_line() + 
-    ggtitle("CAPM: Expected Return vs. Beta") + 
-    xlab("Beta") + 
-    ylab("Expected Return (%)")
+  calc_return <- future_sapply(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
   
   return(calc_return * 100)
 }
+
 
 #' Validate Input Parameters for CAPM Calculation 
 #' 
