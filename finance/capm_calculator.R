@@ -4,6 +4,7 @@
 RISK_FREE_RATE <- 0.02 # 2% risk-free rate 
 MARKET_RETURN <- 0.08 # 8% expected market return
 
+# Validation of inputs
 validate_inputs <- function(risk_free_rate, market_return, beta) { 
 if (!is.numeric(risk_free_rate) || risk_free_rate < 0) { 
 stop("Error: Risk-free rate must be a non-negative numeric value.") 
@@ -15,6 +16,7 @@ if (!is.numeric(beta) || length(beta) < 1 || any(beta <= 0)) { stop("Error: Beta
 }
 }
 
+# CAPM Calculation Function
 calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta) { 
 validate_inputs(risk_free_rate, market_return, beta) 
 
