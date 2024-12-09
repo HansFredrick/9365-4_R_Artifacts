@@ -43,7 +43,7 @@ simulate_search_popularity <- function() {
 search_data <- simulate_search_popularity()
 
 merge_stock_and_search <- function(stock_data, search_data) {
-  merged <- merge(stock_data, search_data, by = c("Year", "Quarter"))
+  merged <- merge(stock_data, search_data, by = c("Year", "Quarterr"))
   return(merged)
 }
 merged_data <- merge_stock_and_search(processed_stock_data, search_data)
@@ -51,26 +51,16 @@ merged_data <- merge_stock_and_search(processed_stock_data, search_data)
 
 
 create_overengineered_graphs <- function(data) {
-  # Plot 1: Stock Price vs Popularity
+
   plot1 <- ggplot(data, aes(x = Quarter, group = Year)) +
     geom_line(aes(y = AvgClose, color = "Stock Price")) +
-    geom_line(aes(y = Popularity * 100, color = "Popularity (Scaled)")) +
+    geom_line(aes(y = Popularity * 900, color = "Popularity (Scaled)")) +
     facet_wrap(~Year, scales = "free_x") +
     ggtitle("Stock Price vs Popularity by Quarter (Why?)") +
     theme_minimal()
   print(plot1)
  
-  # Plot 2: Growth Comparison
-  comparison_plot <- ggplot(data, aes(x = Quarter)) +
-   geom_bar(aes(y = AvgStockGrowth, fill = "Stock Growth"), stat = "identity", position = "dodge") +
-   geom_bar(aes(y = AvgPopularityGrowth, fill = "Popularity Growth"), stat = "identity", position = "dodge") +
-   geom_line(aes(y = DifferenceMetric * 10, group = 1, color = "Difference Metric"), size = 1, linetype = "dashed") +
-   scale_y_continuous(sec.axis = sec_axis(~./10, name = "Difference Metric (Scaled)")) +
-   ggtitle("Quarterly Comparison Since 2022")
 
-
- 
-  # Plot 3: Irrelevant Scatterplot
   plot3 <- ggplot(data, aes(x = StockGrowth, y = PopularityGrowth)) +
     geom_point(aes(color = Year), size = 3) +
     geom_smooth(method = "lm", se = FALSE, color = "red") +
@@ -79,6 +69,16 @@ create_overengineered_graphs <- function(data) {
   print(plot3)
 }
 
+
+ # Extracted comparison graph.
+  ccreate_comparison_graph <- function(data, scale_factor = 10) {
+  ggplot(data, aes(x = Quarter)) +
+    geom_bar(aes(y = AvgStockGrowth, fill = "Stock Growth"), stat = "identity") +
+    geom_line(aes(y = DifferenceMetric * scale_factor, group = 1, color = "Difference Metric")) +
+    ggtitle("Comparison Graph")
+}
+
+comparison_plot <- create_comparison_graph(merged_data
 
 ### Execution ###
 # Step 1: Fetch stock data
