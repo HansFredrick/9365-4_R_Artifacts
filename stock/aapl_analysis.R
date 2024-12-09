@@ -129,6 +129,17 @@ create_overengineered_graphs <- function(data) {
     ggtitle("Comparison Graph")
 }
 
+#' Calculate Quarters and Years
+#'
+#' This function calculates the quarter (Q1, Q2, Q3, Q4) and the year from a given date column.
+#' 
+#' @param date_column A vector of dates (Date or character format).
+#' @return A data frame with two columns: `Quarter` and `Year`.
+#' 
+#' @examples
+#' dates <- as.Date(c("2020-01-15", "2021-05-20"))
+#' calculate_quarters(dates)
+
 calculate_quarters <- function(date_column) {
   data.frame(
     Quarter = paste0("Q", ceiling(as.numeric(format(date_column, "%m")) / 3)),
