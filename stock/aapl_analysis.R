@@ -6,13 +6,10 @@ library(quantmod)
 library(ggplot2)
 library(dplyr)
 
-
-fetch_stock_data <- function() {
-  getSymbols("AAPL", src = "yahoo", from = "2020-01-01", to = "2023-12-31", auto.assign = TRUE)
-  stock_data <- AAPL
-  return(stock_data)
+fetch_stock_data <- function(symbol, start_date, end_date) {
+  getSymbols(symbol, src = "yahoo", from = start_date, to = end_date, auto.assign = FALSE)
 }
-stock_data <- fetch_stock_data()
+stock_data <- fetch_stock_data("AAPL", "2020-01-01", "2023-12-31")
 
 process_stock_data <- function(stock_data) {
   stock_df <- data.frame(Date = index(stock_data), coredata(stock_data))
