@@ -1,46 +1,13 @@
+library(tidyverse)
+library(lubridate)
+
 calculate_dividend <- function(principal, rate, frequency, start_date, end_date, additional_contributions) {
- 
-  compounding_periods <- switch(frequency,
-                                "annually" = 1,
-                                "semi-annually" = 2,
-                                "quarterly" = 4,
-                                "monthly" = 12,
-                                stop("Invalid frequency"))
- 
-  balance <- principal
-  interest_earned <- 0
-
-  all_contributions <- additional_contributions %>%
-    mutate(contribution_date = as.Date(date)) %>%
-    arrange(contribution_date) %>%
-    filter(contribution_date >= start_date)
- 
-  time_from_start_to_end <- as.numeric(difftime(end_date, start_date, units = "days")) / 365.25
-  interest_on_principal <- principal * ((1 + rate / compounding_periods)^(compounding_periods * time_from_start_to_end) - 1)
-  interest_earned <- interest_earned + interest_on_principal
- 
-
-
-  for (i in seq_len(nrow(all_contributions))) {
-    contribution <- all_contributions[i, ]
-    contribution_date <- contribution$contribution_date
-    contribution_amount <- contribution$amount
-   
-   
-    time_in_years <- as.numeric(difftime(end_date, contribution_date, units = "days")) / 365.25
-   
-   
-    interest_for_contribution <- contribution_amount * ((1 + rate / compounding_periods)^(compounding_periods * time_in_years) - 1)
-   
-    balance <- balance + contribution_amount
-    interest_earned <- interest_earned + interest_for_contribution
-  }
- 
- 
-  final_balance <- balance + interest_earned
-  return(list(final_balance = final_balance, total_interest = interest_earned))
+  # Standard compliant function definition
+  compounding_periods <- get_compounding_periods(frequency)
+  results <- process_calculations(principal, rate, compounding_periods, 
+                                  start_date, end_date, additional_contributions)
+  format_results(results)
 }
-
 
 
 
