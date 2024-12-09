@@ -2,21 +2,6 @@ library(tidyverse)
 library(lubridate)
 
 
-#' Calculate dividend returns with additional contributions
-#' @param principal Initial investment amount
-#' @param rate Annual interest rate (decimal)
-#' @param frequency Compounding frequency
-#' @param start_date Start date of investment
-#' @param end_date End date of investment
-#' @param additional_contributions Data frame of contributions
-#' @return List containing calculation results
-calculate_dividend <- function(principal, rate, frequency, start_date, end_date, additional_contributions) {
-  # Standard compliant function definition
-  compounding_periods <- get_compounding_periods(frequency)
-  results <- process_calculations(principal, rate, compounding_periods, 
-                                  start_date, end_date, additional_contributions)
-  format_results(results)
-}
 
 
 #Input Validation
@@ -283,5 +268,98 @@ error_reporter <- function() {
   )
 }
 
+#' Calculate dividend returns with additional contributions
+#' @param principal Initial investment amount
+#' @param rate Annual interest rate (decimal)
+#' @param frequency Compounding frequency
+#' @param start_date Start date of investment
+#' @param end_date End date of investment
+#' @param additional_contributions Data frame of contributions
+#' @return List containing calculation results
+calculate_dividend_optimized <- function(principal, rate, frequency, start_date, 
+                                         end_date,ons) {
+  # Initialize handlers
+  calc_cache <- calculation_cache()
+  date_proc <- date_handler()
+  error_rep <- error_reporter()
+  recovery <- input_recovery_handler()
+  
+  # Recover and validate inputs with fallbacks
+  tryCatch({
+    # Recover numeric inputs
+    safe_principal <- recovery$recover_numeric(principal, default = 0)
+    safe_rate <- recovery$recover_numeric(rate, default = 0.01)
+    
+    # Recover dates
+    safe_start_date <- recovery$recover_date(start_date)
+    safe_end_date <- recovery$recover_date(end_date)
+    
+    # Recover frequency
+    safe_frequency <- recovery$recover_frequency(frequency)
+    
+    # Recover contributions
+    safe_contributions <- recovery$recover_contributions(additional_contributions)
+    
+    # Validate recovered inputs
+    validate_numeric_inputs(safe_principal, safe_rate)
+    validate_frequency(safe_frequency)
+    validate_dates(safe_start_date, safe_end_date)
+    validate_contributions(safe_contributions)
+    
+    # Process dates
+    dates <- calc_cache$calculate("dates", function() {
+      validate_dates(date_proc$process(safe_start_date), 
+                     date_proc$process(safe_end_date))
+    })
+    
+    # Get compounding periods
+    periods <- get_compounding_periods(safe_frequency)
+    
+    # Calculate initial interest
+    time_total <- as.numeric(difftime(dates$end, dates$start, 
+                                      units = "days")) / 365.25
+    initial_interest <- safe_calculate_interest(safe_principal, safe_rate, 
+                                                time_total, periods)
+    
+    # Process contributions
+    contribution_results <- calculate_contribution_interest_vectorized(
+      safe_contributions, safe_rate, periods, dates$end
+    )
+    
+    # Format results
+    format_results(list(
+      principal = safe_principal,
+      initial_interest = initial_interest,
+      contribution_interest = sum(contribution_results),
+      total_contributions = sum(safe_contributions$amount)
+    ))
+    
+  }, error = function(e) {
+    error_rep$add("calculation_error", e$message)
+    list(error = TRUE, message = e$message)
+  })
+}
 
+# Example Usage
+example <- function() {
+  result <- calculate_dividend_optimized(
+    principal = 5000,
+    rate = 0.06,
+    frequency = "annually",
+    start_date = "2023-01-01",
+    end_date = "2023-12-31",
+    additional_contributions = data.frame(
+      date = c("2023-03-03", "2023-06-15"),
+      amount = c(10000, 2000)
+    )
+  )
+  
+  if (!is.null(result$error)) {
+    cat("Error:", result$message, "\n")
+  } else {
+    cat("Final Balance: $", result$final_balance, "\n")
+    cat("Total Interest: $", result$total_interest, "\n")
+    cat("Total Contributions: $", result$total_contributions, "\n")
+  }
+}
 
