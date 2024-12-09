@@ -20,8 +20,6 @@ calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta)
 
 validate_inputs(risk_free_rate, market_return, beta) 
 
-print(paste("Processing CAPM calculation with risk-free rate =", risk_free_rate, ", market return =", market_return, ", and beta =", beta)) 
-
 # Check if beta is a vector 
 
 if (length(beta) > 1) { 
