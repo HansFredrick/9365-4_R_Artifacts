@@ -3,11 +3,11 @@ library(quantmod)
 library(ggplot2)
 
 # Step 1: Fetch Data
-# Define symbols for stock and market index
-stock_symbol <- "AAPL"         # Example stock: Apple Inc.
-market_symbol <- "^GSPC"       # Example market index: S&P 500
-start_date <- "2020-01-01"     # Start of analysis
-end_date <- Sys.Date()         # Current date
+stock_symbol <- readline(prompt = "Enter stock symbol: ")
+market_symbol <- readline(prompt = "Enter market index symbol: ")
+start_date <- readline(prompt = "Enter start date (YYYY-MM-DD): ")
+end_date <- readline(prompt = "Enter end date (YYYY-MM-DD): ")
+risk_free_rate <- as.numeric(readline(prompt = "Enter annual risk-free rate (in decimal, e.g., 0.02 for 2%): "))
 
 # Get historical stock and market data
 stock_data <- getSymbols(stock_symbol, src = "yahoo", from = start_date, to = end_date, auto.assign = FALSE)
@@ -26,7 +26,7 @@ returns_data <- merge(stock_returns, market_returns, all = FALSE)
 colnames(returns_data) <- c("Stock", "Market")
 
 # Step 3: Calculate Beta
-model <- lm(Stock ~ Market, data = returns_data)  # Missing NA handling
+model <- lm(Stock ~ Market, data = returns_data)
 beta <- coef(model)["Market"]
 
 # Print beta value
