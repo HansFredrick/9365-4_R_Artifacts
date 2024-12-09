@@ -13,8 +13,8 @@ fetch_stock_data <- function(symbol, start_date, end_date) {
   )
   return(stock_data)
 }
-
 stock_data <- fetch_stock_data("AAPL", "2020-01-01", "2023-12-31")
+
 
 process_stock_data <- function(stock_data, close_column) {
   stock_df <- data.frame(Date = index(stock_data), coredata(stock_data))
@@ -32,8 +32,6 @@ process_stock_data <- function(stock_data, close_column) {
 }
 processed_stock_data <- process_stock_data(stock_data, "AAPL.Close")
 
-
-processed_stock_data <- process_stock_data(stock_data)
 
 #function for simulating search popularity
 simulate_search_popularity <- function(years, quarters) {
