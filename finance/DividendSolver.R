@@ -44,6 +44,15 @@ process_calculations <- function(principal, rate, periods, start_date, end_date,
 }
 
 
+#Input Validation
+validate_numeric_inputs <- function(principal, rate) {
+  if (!is.numeric(principal) || principal <= 0)
+    stop("Principal must be a positive number")
+  if (!is.numeric(rate) || rate < 0 || rate > 1)
+    stop("Rate must be between 0 and 1")
+}
+
+
 #Calculation Funtion
 
 format_results <- function(results) {
