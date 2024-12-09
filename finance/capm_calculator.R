@@ -63,3 +63,8 @@ test_that("CAPM visualization works", {
   result <- capture.output(calculate_capm(0.02, 0.08, c(1.1, 1.2, 1.3)))
   expect_true(any(grepl("Expected Return vs. Beta", result)))
 })
+
+test_that("CAPM function handles negative beta values", {
+  expect_error(calculate_capm(0.02, 0.08, -1))
+  expect_error(calculate_capm(0.02, 0.08, c(-1, 1.2)))
+})
