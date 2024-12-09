@@ -35,3 +35,8 @@ calc_return <- calc_return * 100
 
 return(calc_return) 
 }
+
+library(testthat)
+ 
+test_that("CAPM function calculates correctly", { expect_equal(calculate_capm(0.02, 0.08, 1.2), 8) expect_equal(calculate_capm(0.02, 0.08, c(1, 2)), c(8, 10)) 
+})
