@@ -19,7 +19,7 @@ stop("Error: Beta must be a positive numeric value.")
 calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta) {
 validate_inputs(risk_free_rate, market_return, beta) 
 # CAPM formula 
-expected_return <- risk_free_rate + beta * (market_return - risk_free_rate) 
+calc_return <- risk_free_rate + beta * (market_return - risk_free_rate) 
 
-return(expected_return)
+return(calc_return)
  }
