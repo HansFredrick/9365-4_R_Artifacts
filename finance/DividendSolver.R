@@ -186,6 +186,19 @@ additional_contributions() {
   })
 }
 
+calculate_contribution_interest_vectorized <- function(contributions, rate, 
+                                                       periods, end_date) {
+  contribution_dates <- as.Date(contributions$date)
+  times <- as.numeric(difftime(end_date, contribution_dates, 
+                               units = "days")) / 365.25
+  
+  mapply(safe_calculate_interest,
+         contributions$amount,
+         MoreArgs = list(rate = rate, periods = periods),
+         time = times)
+}
+
+
 
 
 #data recovery
