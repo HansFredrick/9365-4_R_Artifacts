@@ -16,19 +16,11 @@ if (!is.numeric(beta) || length(beta) < 1 || any(beta <= 0)) { stop("Error: Beta
 }
 
 calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta) { 
-
 validate_inputs(risk_free_rate, market_return, beta) 
 
-calc_return <- risk_free_rate + beta * (market_return - risk_free_rate)
+calc_return <- risk_free_rate + (beta * (market_return - risk_free_rate))
 
-if (length(beta) > 1) { 
-calc_return <- sapply(beta, function(b) risk_free_rate + b * (market_return - risk_free_rate)) 
-}
-
-# Convert to percentage 
-calc_return <- calc_return * 100 
-
-return(calc_return) 
+return(calc_return * 100) 
 }
 
 library(testthat)
