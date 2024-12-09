@@ -18,21 +18,19 @@ fetch_stock_data <- function() {
 }
 stock_data <- fetch_stock_data()
 
-compute_quarterly_averages <- function(stock_data) {
+process_stock_data <- function(stock_data) {
   stock_df <- data.frame(Date = index(stock_data), coredata(stock_data))
-  stock_df <- stock_df %>%
+  processed <- stock_df %>%
     mutate(Quarter = paste0("Q", ceiling(as.numeric(format(Date, "%m")) / 3)),
            Year = format(Date, "%Y")) %>%
-    group_by(Year, Quarter) %>%
-    summarise(
-      AvgClose = mean(AAPL.Close, na.rm = TRUE),
-      High = max(AAPL.High, na.rm = TRUE),
-      Low = min(AAPL.Low, na.rm = TRUE)
-    )
-  return(stock_df)
+      group_by(Year, Quarter) %>%
+    summarise(AvgClose = mean(AAPL.Close, na.rm = TRUE))
+  
+  return(processed)
 }
 
-processed_stock_data <- compute_quarterly_averages(stock_data)
+
+processed_stock_data <- process_stock_data(stock_data)
 
 simulate_search_popularity <- function() {
   search_data <- expand.grid(
@@ -49,3 +47,5 @@ merge_stock_and_search <- function(stock_data, search_data) {
   return(merged)
 }
 merged_data <- merge_stock_and_search(processed_stock_data, search_data)
+
+
