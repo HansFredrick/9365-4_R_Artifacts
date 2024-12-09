@@ -103,7 +103,8 @@ check_parameters <- function(params) {
 
 
 #Calculation Function
-additional_contributions) {
+safe_calculate_dividend <- function(principal, rate, frequency, start_date, 
+                                    end_date, additional_contributions) {
   tryCatch({
     validate_inputs(principal, rate, frequency, start_date, 
                     end_date, additional_contributions)
@@ -119,6 +120,25 @@ additional_contributions) {
 }
 
 
+
+additional_contributions() {
+  tryCatch({
+    validate_inputs(principal, rate, frequency, start_date, 
+                    end_date, additional_contributions)
+    calculate_dividend(principal, rate, frequency, start_date, 
+                       end_date, additional_contributions)
+  }, error = function(e) {
+    list(
+      error = TRUE,
+      message = e$message,
+      timestamp = Sys.time()
+    )
+  })
+}
+
+
+
+#data recovery
 
 format_results <- function(results) {
 final_balance <- results$principal + 
