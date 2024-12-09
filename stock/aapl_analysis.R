@@ -36,15 +36,14 @@ processed_stock_data <- process_stock_data(stock_data, "AAPL.Close")
 processed_stock_data <- process_stock_data(stock_data)
 
 #function for simulating search popularity
-simulate_search_popularity <- function() {
-  search_data <- expand.grid(
-    Year = c("2020", "2021", "2022", "2023"),
-    Quarter = c("Q1", "Q2", "Q3", "Q4")
-  )
-  search_data$Popularity <- round(runif(nrow(search_data), 50, 100))
+simulate_search_popularity <- function(years, quarters) {
+  search_data <- expand.grid(Year = years, Quarter = quarters)
+  search_data <- search_data %>%
+    mutate(Popularity = round(runif(n(), 50, 100)))
   return(search_data)
 }
-search_data <- simulate_search_popularity()
+search_data <- simulate_search_popularity(c("2020", "2021", "2022", "2023"), c("Q1", "Q2", "Q3", "Q4"))
+
 
 merge_stock_and_search <- function(stock_data, search_data) {
   merged <- merge(stock_data, search_data, by = c("Year", "Quarterr"))
