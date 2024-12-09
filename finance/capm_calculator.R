@@ -1,6 +1,7 @@
 # capm_calculator.R
 
 library(ggplot2)
+library(purrr)
 library(testthat)
 
 # Constants 
@@ -11,22 +12,13 @@ MARKET_RETURN <- 0.08 # 8% expected market return
 #' 
 #' @param risk_free_rate Numeric value representing the risk-free rate (default 0.02). 
 #' @param market_return Numeric value representing the expected market return. #' @param beta Numeric or vector of numeric values representing the stock's beta. 
-#' @return A numeric value or vectors of expected returns. 
-
+#' @return A numeric value or vector of expected returns. 
 
 calculate_capm <- function(risk_free_rate = RISK_FREE_RATE, market_return, beta) {
   validate_inputs(risk_free_rate, market_return, beta)
   
-  calc_return <- vapply(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)), numeric(1))
-  
-  # Plot the results
-  df <- data.frame(beta = beta, return = calc_return * 100)
-  ggplot(df, aes(x = beta, y = return)) + 
-    geom_line() + 
-    ggtitle("CAPM: Expected Return vs. Beta") + 
-    xlab("Beta") + 
-    ylab("Expected Return (%)")
-  
+  calc_return <- map_dbl(beta, function(b) risk_free_rate + (b * (market_return - risk_free_rate)))
+
   return(calc_return * 100)
 }
 
