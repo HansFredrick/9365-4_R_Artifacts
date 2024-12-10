@@ -17,15 +17,7 @@ lapply(required_packages, library, character.only = TRUE)
 #' @throws Error if parameters are missing or invalid.
 
 fetch_stock_data <- function(symbol, start_date, end_date) {
-  if (missing(symbol) || missing(start_date) || missing(end_date)) {
-    stop("Error: 'symbol', 'start_date', and 'end_date' are required parameters.")
-  }
-  if (!lubridate::is.Date(as.Date(start_date)) || !lubridate::is.Date(as.Date(end_date))) {
-    stop("Error: 'start_date' and 'end_date' must be valid dates in 'YYYY-MM-DD' format.")
-  }
-  if (as.Date(start_date) > as.Date(end_date)) {
-    stop("Error: 'start_date' cannot be later than 'end_date'.")
-  }
+  stopifnot(!missing(symbol), !missing(start_date), !missing(end_date))
   stock_data <- tryCatch(
     getSymbols(symbol, src = "yahoo", from = start_date, to = end_date, auto.assign = FALSE),
     error = function(e) stop("Error fetching stock data: ", e)
