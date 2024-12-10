@@ -126,6 +126,15 @@ calculate_quarters <- function(date_column) {
   )
 }
 
+calculate_growth <- function(data) {
+  data %>%
+    arrange(Year, Quarter) %>%
+    mutate(
+      StockGrowth = AvgClose / lag(AvgClose) - 1,
+      PopularityGrowth = Popularity / lag(Popularity) - 1
+    )
+}
+
 plot_data <- function(data, title = "Stock Data vs Popularity") {
   ggplot(data, aes(x = AvgClose, y = Popularity)) +
     geom_point() +
