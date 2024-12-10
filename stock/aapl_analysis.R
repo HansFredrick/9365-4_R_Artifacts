@@ -72,26 +72,14 @@ processed_stock_data <- process_stock_data(stock_data, "AAPL.Close")
 #' @examples
 #' simulate_search_popularity(c("2020", "2021"), c("Q1", "Q2"))
 
-simulate_search_popularity <- function(years, quarters) {
-   if (is.null(years) || length(years) == 0) {
-    stop("Error: 'years' must not be NULL or empty.")
-  }
-  if (is.null(quarters) || length(quarters) == 0) {
-    stop("Error: 'quarters' must not be NULL or empty.")
-  }
-  if (!is.numeric(min_pop) || !is.numeric(max_pop) || min_pop < 0 || max_pop < min_pop) {
-    stop("Error: 'min_pop' and 'max_pop' must be numeric, and 'max_pop' must be greater than or equal to 'min_pop'.")
-  }
-  
-  simulate_search_popularity <- function(years, quarters, min_pop = 50, max_pop = 100) {
-  search_data <- expand.grid(Year = years, Quarter = quarters)
-  search_data <- search_data %>%
+simulate_search_popularity <- function(years, quarters, min_pop = 50, max_pop = 100) {
+  stopifnot(length(years) > 0, length(quarters) > 0)
+  expand.grid(Year = years, Quarter = quarters) %>%
     mutate(Popularity = round(runif(n(), min_pop, max_pop)))
-  return(search_data)
 }
 
 
-}
+
 search_data <- simulate_search_popularity(c("2020", "2021", "2022", "2023"), c("Q1", "Q2", "Q3", "Q4"))
 
 #' Merge Stock and Search Data
