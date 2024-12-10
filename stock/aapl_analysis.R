@@ -142,6 +142,14 @@ plot_data <- function(data, title = "Stock Data vs Popularity") {
     theme_minimal()
 }
 
+create_comparison_graph <- function(data, scale_factor = 1) {
+  ggplot(data, aes(x = Quarter)) +
+    geom_bar(aes(y = AvgClose, fill = "Stock"), stat = "identity") +
+    geom_line(aes(y = Popularity * scale_factor, color = "Popularity")) +
+    theme_minimal()
+}
+
+
 stock_data <- fetch_apple_stock_data()
 
 testthat::test_that("fetch_stock_data returns non-empty data", {
@@ -159,5 +167,5 @@ merged_data <- merge_and_compare(stock_data, search_data)
 
 
 
-create_overengineered_graphs(merged_data)
+plot_data(merged_data)
 
