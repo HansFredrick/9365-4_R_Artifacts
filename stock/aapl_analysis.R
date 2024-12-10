@@ -125,6 +125,17 @@ merge_stock_and_search <- function(stock_data, search_data) {
   return(merged)
 }
 
+validate_stock_data <- function(stock_data) {
+  if (is.null(stock_data) || nrow(stock_data) == 0) {
+    stop("Error: Stock data must not be NULL or empty.")
+  }
+}
+
+validate_columns <- function(data, required_cols) {
+  if (!all(required_cols %in% colnames(data))) {
+    stop("Error: Missing required columns.")
+  }
+}
 
 
 #' Calculate Quarters and Years
