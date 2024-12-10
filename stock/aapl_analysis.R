@@ -126,7 +126,12 @@ calculate_quarters <- function(date_column) {
   )
 }
 
-comparison_plot <- create_comparison_graph(merged_data
+plot_data <- function(data, title = "Stock Data vs Popularity") {
+  ggplot(data, aes(x = AvgClose, y = Popularity)) +
+    geom_point() +
+    labs(title = title, x = "Average Stock Closing Price", y = "Search Popularity") +
+    theme_minimal()
+}
 
 stock_data <- fetch_apple_stock_data()
 
@@ -134,6 +139,7 @@ testthat::test_that("fetch_stock_data returns non-empty data", {
   data <- fetch_stock_data("AAPL", "2020-01-01", "2023-12-31")
   testthat::expect_true(nrow(data) > 0)
 })
+
 
 
 search_data <- simulate_search_data()
