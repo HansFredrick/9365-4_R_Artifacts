@@ -1,11 +1,7 @@
-if (!require("quantmod")) install.packages("quantmod", dependencies = TRUE)
-if (!require("ggplot2")) install.packages("ggplot2", dependencies = TRUE)
-if (!require("dplyr")) install.packages("dplyr", dependencies = TRUE)
-
-library(quantmod)
-library(ggplot2)
-library(dplyr)
-
+required_packages <- c("quantmod", "ggplot2", "dplyr", "lubridate", "testthat")
+new_packages <- required_packages[!(required_packages %in% installed.packages()[, "Package"])]
+if (length(new_packages)) install.packages(new_packages, dependencies = TRUE)
+lapply(required_packages, library, character.only = TRUE)
 
 #' Fetch Stock Data
 #'
