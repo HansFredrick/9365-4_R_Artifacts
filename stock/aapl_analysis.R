@@ -125,6 +125,10 @@ validate_columns <- function(data, required_cols) {
   }
 }
 
+handle_error <- function(message, error = NULL) {
+  stop(paste("Error:", message, error))
+}
+
 
 #' Calculate Quarters and Years
 #'
