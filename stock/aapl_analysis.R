@@ -138,42 +138,6 @@ merge_stock_and_search <- function(stock_data, search_data) {
 }
 
 
-simulate_search_popularity <- function(years, quarters, min_pop = 50, max_pop = 100) {
-  search_data <- expand.grid(Year = years, Quarter = quarters)
-  search_data <- search_data %>%
-    mutate(Popularity = round(runif(n(), min_pop, max_pop)))
-  return(search_data)
-}
-
-
-
-create_overengineered_graphs <- function(data) {
-
-  plot1 <- ggplot(data, aes(x = Quarter, group = Year)) +
-    geom_line(aes(y = AvgClose, color = "Stock Price")) +
-    geom_line(aes(y = Popularity * 900, color = "Popularity (Scaled)")) +
-    facet_wrap(~Year, scales = "free_x") +
-    ggtitle("Stock Price vs Popularity by Quarter (Why?)") +
-    theme_minimal()
-  print(plot1)
- 
-
-  plot3 <- ggplot(data, aes(x = StockGrowth, y = PopularityGrowth)) +
-    geom_point(aes(color = Year), size = 3) +
-    geom_smooth(method = "lm", se = FALSE, color = "red") +
-    ggtitle("Scatterplot of Growth Metrics (Why?)") +
-    theme_light()
-  print(plot3)
-}
-
-
-
-  ccreate_comparison_graph <- function(data, scale_factor = 10) {
-  ggplot(data, aes(x = Quarter)) +
-    geom_bar(aes(y = AvgStockGrowth, fill = "Stock Growth"), stat = "identity") +
-    geom_line(aes(y = DifferenceMetric * scale_factor, group = 1, color = "Difference Metric")) +
-    ggtitle("Comparison Graph")
-}
 
 #' Calculate Quarters and Years
 #'
